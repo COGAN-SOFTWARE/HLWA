@@ -110,9 +110,7 @@ namespace CoganSoftware::HLWR {
 	};
 	class Key {
 	public:
-		Key(const std::wstring& _path, HKEY _parent = HKEY_CLASSES_ROOT) {
-			parent = _parent;
-
+		Key(const std::wstring& _path, HKEY _parent = HKEY_CLASSES_ROOT) : path{ _path }, parent{ _parent } {
 			const size_t pos = path.find(L"\\\\");
 			if (pos != std::string::npos) {
 				creationResult = CS_GWR_R_INVALID;
