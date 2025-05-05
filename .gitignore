@@ -1,3 +1,4 @@
 premake5.exe
 HLWR/.vs
 HLWR/bin
+HLWR/obj
