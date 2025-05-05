@@ -1,0 +1,10 @@
+TITLE HLWR Build
+@ECHO off
+COLOR 0A
+CLS
+
+GOTO MAIN
+
+:MAIN
+premake5 vs2022
+pause
