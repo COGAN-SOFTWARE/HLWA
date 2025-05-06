@@ -76,7 +76,7 @@ int main() {
 
 	std::string str = "Example Default Entry!!!";
 	Registry::Entry defaultEntry = Registry::Entry{
-		CS_GWR_DEFAULTENTRY, // This is a `std::wstring` input, it's the name of the entry; here we provide the default entry name string which exposed is simply just L"". We write this as a macro for future proofing constants or if we support additional platforms that have a similar registry-like system.
+		CS_GWR_DEFAULTENTRY, // This is a `std::string`/`std::wstring` input, it's the name of the entry; here we provide the default entry name string which exposed is simply just ""/L"". We write this as a macro for UTF8/UTF16 compatibility.
 		EntryType::STRING,
 		nullptr,             // For entries, we add each data type as a ptr that can be nullptr if not the desired EntryType; this is present in `SetType()` and `GetData()`
 		nullptr,
