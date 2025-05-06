@@ -143,8 +143,10 @@ namespace CoganSoftware::HLWR {
 
 			InitializeKey();
 		};
+		Key(const Key& other) : key{ other.key }, owner{ false } {}
+		Key(Key&& other) noexcept : key{ std::move(other.key) }, owner{ true } {}
 		~Key() {
-			if (key) RegCloseKey(key);
+			if (owner && key) RegCloseKey(key);
 		};
 		
 		CS_GWR_R GetCreationResult() { return creationResult; };
@@ -323,7 +325,7 @@ namespace CoganSoftware::HLWR {
 			}
 			childKeys.push_back({ name, key });
 			dirty = true;
-			return childKeys[childKeys.size() - 1];
+			return childKeys.back();
 		};
 		CS_GWR_R AddEntry(Entry& entry) {
 			entry.ForceDirty();
@@ -392,6 +394,7 @@ namespace CoganSoftware::HLWR {
 		std::vector<Entry> entries;
 		CS_GWR_R creationResult;
 		bool dirty = false;
+		bool owner = true;
 	};
 }
 #endif
