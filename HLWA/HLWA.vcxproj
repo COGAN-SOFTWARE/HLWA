@@ -94,10 +94,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\HLWA\hlwa.hpp" />
+    <ClInclude Include="include\HLWA\core.hpp" />
+    <ClInclude Include="include\HLWA\ext_jumplist.hpp" />
+    <ClInclude Include="include\HLWA\ext_registry.hpp" />
+    <ClInclude Include="include\HLWA\ext_taskbar.hpp" />
+    <ClInclude Include="include\HLWA\ext_utils.hpp" />
+    <ClInclude Include="include\HLWA\types.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\HLWA\hlwa.cpp" />
+    <ClCompile Include="src\HLWA\ext_jumplist.cpp" />
+    <ClCompile Include="src\HLWA\ext_registry.cpp" />
+    <ClCompile Include="src\HLWA\ext_taskbar.cpp" />
+    <ClCompile Include="src\HLWA\ext_utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

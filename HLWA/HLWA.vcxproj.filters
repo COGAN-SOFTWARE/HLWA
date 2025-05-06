@@ -15,12 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\HLWA\hlwa.hpp">
+    <ClInclude Include="include\HLWA\core.hpp">
+      <Filter>include\HLWA</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLWA\ext_jumplist.hpp">
+      <Filter>include\HLWA</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLWA\ext_registry.hpp">
+      <Filter>include\HLWA</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLWA\ext_taskbar.hpp">
+      <Filter>include\HLWA</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLWA\ext_utils.hpp">
+      <Filter>include\HLWA</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLWA\types.hpp">
       <Filter>include\HLWA</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\HLWA\hlwa.cpp">
+    <ClCompile Include="src\HLWA\ext_jumplist.cpp">
+      <Filter>src\HLWA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HLWA\ext_registry.cpp">
+      <Filter>src\HLWA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HLWA\ext_taskbar.cpp">
+      <Filter>src\HLWA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HLWA\ext_utils.cpp">
       <Filter>src\HLWA</Filter>
     </ClCompile>
   </ItemGroup>
