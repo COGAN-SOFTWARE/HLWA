@@ -26,17 +26,17 @@
 ---
 ### FAQ
 
-**Q**: I thought this was a lightweight single-header API?
-**A**: As of recent, some code has been moved into an implementation file; however it's still lightweight and can be thrown directly in your project.
+> **Q**: I thought this was a lightweight single-header API?
+> **A**: As of recent, some code has been moved into an implementation file; however it's still lightweight and can be thrown directly in your project.
 
-**Q**: Can I use UTF8 instead of UTF16 strings?
-**A**: Yes you can, define `CS_GWR_USEUTF8STRINGS` before including this header file.
+> **Q**: Can I use UTF8 instead of UTF16 strings?
+> **A**: Yes you can, define `CS_GWR_USEUTF8STRINGS` before including this header file.
 
-**Q**: Will `Windows.h` leak into my project?
-**A**: No, in a previous update converting from single-header API to a simple lightweight API, we moved the `#include` statement into the implementation file and forward declared `HKEY` internally (this is currently still visible though; no direct windows functionality however).
+> **Q**: Will `Windows.h` leak into my project?
+> **A**: No, in a previous update converting from single-header API to a simple lightweight API, we moved the `#include` statement into the implementation file and forward declared `HKEY` internally (this is currently still visible though; no direct windows functionality however).
 
-**Q**: When will standalone CMake clang/gcc work?
-**A**: I'm not focusing on those issues right now, however if anyone has a solution to the cli errors when compiling the CMake project using standalone compilers, please reach out to us.
+> **Q**: When will standalone CMake clang/gcc work?
+> **A**: I'm not focusing on those issues right now, however if anyone has a solution to the cli errors when compiling the CMake project using standalone compilers, please reach out to us.
 
 ---
 ### How To Use
