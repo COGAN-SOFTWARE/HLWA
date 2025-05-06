@@ -4,17 +4,7 @@
 
 # How To Compile
 
-### Using Visual Studio
-
-> A pre-built vs22 solution comes with the project; premake5 can be installed into the root directory and executed to rebuild the solution. To compile, simply open up the solution and build it from the editor; the project is intended for primarily clang.
-
-### Using CMake
-
-TODO
-
-### Direct Inclusion
-
-> HLWR is designed as a single-header library which means it's perfectly acceptable to include straight into your project's source code and not require to compile this as a separate static library.
+> HLWR is designed as a single-header library which means there's no need to build/compile the project. The ability to build a solution & project from premake5 is purely for future-proofing in case this goes beyond single-header implementation; simply just include it in your source code or add it to your search path(s).
 
 # How To Use
 

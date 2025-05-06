@@ -108,26 +108,46 @@ namespace CoganSoftware::HLWR {
 		EntryType type;
 		std::variant<uint32_t, std::vector<uint8_t>, std::wstring> data{};
 	};
+	
+	enum struct RootKey {
+		ClassesRoot,
+		CurrentConfig,
+		CurrentUser,
+		CurrentUserLocalSettings,
+		LocalMachine,
+		Users
+	};
 	class Key {
 	public:
-		Key(const std::wstring& _path, HKEY _parent = HKEY_CLASSES_ROOT) : path{ _path }, parent{ _parent } {
-			const size_t pos = path.find(L"\\\\");
-			if (pos != std::string::npos) {
-				creationResult = CS_GWR_R_INVALID;
+		Key(const std::wstring& _path, RootKey root) : path{ _path } {
+			switch (root) {
+			case(RootKey::ClassesRoot):
+				parent = HKEY_CLASSES_ROOT;
+				break;
+			case(RootKey::CurrentConfig):
+				parent = HKEY_CURRENT_CONFIG;
+				break;
+			case(RootKey::CurrentUser):
+				parent = HKEY_CURRENT_USER;
+				break;
+			case(RootKey::CurrentUserLocalSettings):
+				parent = HKEY_CURRENT_USER_LOCAL_SETTINGS;
+				break;
+			case(RootKey::LocalMachine):
+				parent = HKEY_LOCAL_MACHINE;
+				break;
+			case(RootKey::Users):
+				parent = HKEY_USERS;
+				break;
 			}
 
-			DWORD disposition;
-			HRESULT r = RegCreateKeyEx(parent, _path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &key, &disposition);
-			if (disposition == REG_OPENED_EXISTING_KEY) {
-				creationResult = CS_GWR_R_KEYALREADYEXISTS | CS_GWR_R_SUCCESS;
-				return;
-			}
-			if (r != ERROR_SUCCESS) creationResult = CS_GWR_R_INVALID;
-			else creationResult = CS_GWR_R_SUCCESS;
+			InitializeKey();
 		};
 		~Key() {
-			RegCloseKey(key);
+			if (key) RegCloseKey(key);
 		};
+		
+		CS_GWR_R GetCreationResult() { return creationResult; };
 
 		CS_GWR_R Load() {
 			wchar_t subKeyName[256];
@@ -174,7 +194,6 @@ namespace CoganSoftware::HLWR {
 
 			return CS_GWR_R_SUCCESS;
 		};
-		// DeepLoad loads the entirety of keys from the current.
 		CS_GWR_R DeepLoad() {
 			CS_GWR_R r = Load();
 			if (r != CS_GWR_R_SUCCESS) return r;
@@ -270,7 +289,6 @@ namespace CoganSoftware::HLWR {
 
 			return CS_GWR_R_SUCCESS;
 		};
-		// DeepSubmit submits the entirety of keys from the current.
 		CS_GWR_R DeepSubmit() {
 			CS_GWR_R r = Submit();
 			if (r != CS_GWR_R_SUCCESS) return r;
@@ -280,27 +298,23 @@ namespace CoganSoftware::HLWR {
 			}
 			return CS_GWR_R_SUCCESS;
 		}
-		// Destroys the active key in the windows registry and frees this object's memory.
-		CS_GWR_R Destroy() {
+		CS_GWR_R EraseTree() {
 			HRESULT r = RegDeleteTree(parent, path.c_str());
 			if (r != ERROR_SUCCESS) return CS_GWR_R_INVALID;
 			return CS_GWR_R_SUCCESS;
 		};
 		
-		CS_GWR_R GetCreationResult() { return creationResult; };
 		void ForceDirty() { dirty = true; };
 		bool IsDirty() const { return dirty; };
 
 		const std::wstring& GetPath() const { return path; };
 		
-		// Clears all data; can be used for clearing an entire directory.
 		void Clear() {
 			childKeys.clear();
 			entries.clear();
 			dirty = true;
 		};
 
-		const std::vector<Key>& GetChildKeys() const { return childKeys; };
 		Key& AddChildKey(const std::wstring& name) {
 			for (size_t i = 0; i < childKeys.size(); i++) {
 				if (childKeys[i].GetPath() == name) {
@@ -311,18 +325,6 @@ namespace CoganSoftware::HLWR {
 			dirty = true;
 			return childKeys[childKeys.size() - 1];
 		};
-		CS_GWR_R RemoveChildKey(const std::wstring& keyName) {
-			for (size_t i = 0; i < childKeys.size(); i++) {
-				if (childKeys[i].GetPath() == keyName) {
-					childKeys.erase(childKeys.begin() + i);
-					dirty = true;
-					return CS_GWR_R_SUCCESS;
-				}
-			}
-			return CS_GWR_R_KEYNOTFOUND;
-		};
-		
-		const std::vector<Entry>& GetEntries() const { return entries; };
 		CS_GWR_R AddEntry(Entry& entry) {
 			entry.ForceDirty();
 			bool found = false;
@@ -339,6 +341,16 @@ namespace CoganSoftware::HLWR {
 			}
 			return CS_GWR_R_SUCCESS;
 		};
+		CS_GWR_R RemoveChildKey(const std::wstring& keyName) {
+			for (size_t i = 0; i < childKeys.size(); i++) {
+				if (childKeys[i].GetPath() == keyName) {
+					childKeys.erase(childKeys.begin() + i);
+					dirty = true;
+					return CS_GWR_R_SUCCESS;
+				}
+			}
+			return CS_GWR_R_KEYNOTFOUND;
+		};
 		CS_GWR_R RemoveEntry(const std::wstring& entryName) {
 			for (size_t i = 0; i < entries.size(); i++) {
 				if (entries[i].GetName() == entryName) {
@@ -349,7 +361,30 @@ namespace CoganSoftware::HLWR {
 			}
 			return CS_GWR_R_ENTRYNOTFOUND;
 		};
+		
+		const std::vector<Key>& GetChildKeys() const { return childKeys; };
+		const std::vector<Entry>& GetEntries() const { return entries; };
 	private:
+		Key(const std::wstring& _path, HKEY _parent = HKEY_CLASSES_ROOT) : path{ _path }, parent{ _parent } {
+			InitializeKey();
+		};
+
+		void InitializeKey() {
+			const size_t pos = path.find(L"\\\\");
+			if (pos != std::string::npos) {
+				creationResult = CS_GWR_R_INVALID;
+			}
+
+			DWORD disposition;
+			HRESULT r = RegCreateKeyEx(parent, path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &key, &disposition);
+			if (disposition == REG_OPENED_EXISTING_KEY) {
+				creationResult = CS_GWR_R_KEYALREADYEXISTS | CS_GWR_R_SUCCESS;
+				return;
+			}
+			if (r != ERROR_SUCCESS) creationResult = CS_GWR_R_INVALID;
+			else creationResult = CS_GWR_R_SUCCESS;
+		}
+
 		HKEY parent;
 		HKEY key;
 		std::wstring path;
