@@ -29,5 +29,6 @@ project "HLWR"
    flags { "MultiProcessorCompile" }
 
    files {
+      projectDir.."/**.cpp",
       projectDir.."/**.hpp"
    }

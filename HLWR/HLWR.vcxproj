@@ -94,7 +94,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="hlwr.hpp" />
+    <ClInclude Include="include\HLWR\hlwr.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\HLWR\hlwr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
