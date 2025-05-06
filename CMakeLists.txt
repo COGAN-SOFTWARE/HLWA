@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(HLWR LANGUAGES CXX)
+project(HLWA LANGUAGES CXX)
 
 set(CMAKE_GENERATOR_PLATFORM x64)
 
@@ -16,20 +16,21 @@ endif()
 
 set(CMAKE_CXX_COMPILER "clang++")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWR)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWR)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWA)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWA)
 
-file(GLOB_RECURSE HLWR_SOURCES CONFIGURE_DEPENDS HLWR/*.cpp HLWR/*.hpp)
+file(GLOB_RECURSE HLWA_SOURCES CONFIGURE_DEPENDS HLWA/*.cpp HLWA/*.hpp)
 
-add_library(HLWR STATIC ${HLWR_SOURCES})
+add_library(HLWA STATIC ${HLWA_SOURCES})
 
-target_compile_definitions(HLWR PRIVATE
+target_compile_definitions(HLWA PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )
 
-target_compile_options(HLWR PRIVATE
+target_compile_options(HLWA PRIVATE
     $<$<CONFIG:Debug>:-g>
     $<$<CONFIG:Release>:-O2>
 )
 
+target_compile_definitions(HLWA PRIVATE CS_HLWA_E_ALL)

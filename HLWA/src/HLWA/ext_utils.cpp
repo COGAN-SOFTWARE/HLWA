@@ -1,6 +1,6 @@
 #include "../../include/HLWA/ext_utils.hpp"
 
-#if defined(CS_HLWA_E_REGISTRY)
+#if defined(CS_HLWA_E_REGISTRY) || defined(CS_HLWA_E_ALL)
 #if defined(_WIN32)
 #include <Windows.h>
 

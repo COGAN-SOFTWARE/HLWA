@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(CS_HLWA_E_JUMPLIST)
+#if defined(CS_HLWA_E_JUMPLIST) || defined(CS_HLWA_E_ALL)
 
 #include "types.hpp"
 

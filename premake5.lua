@@ -28,6 +28,8 @@ project "HLWA"
    kind "StaticLib"
    flags { "MultiProcessorCompile" }
 
+   defines { "CS_HLWA_E_ALL" }
+
    files {
       projectDir.."/**.cpp",
       projectDir.."/**.hpp"

@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(CS_HLWA_E_TASKBAR)
+#if defined(CS_HLWA_E_TASKBAR) || defined(CS_HLWA_E_ALL)
 
 #include "types.hpp"
 

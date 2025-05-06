@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(CS_HLWA_E_REGISTRY)
+#if defined(CS_HLWA_E_REGISTRY) || defined(CS_HLWA_E_ALL)
 
 #include "types.hpp"
 
