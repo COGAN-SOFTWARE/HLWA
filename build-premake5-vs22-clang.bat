@@ -1,4 +1,4 @@
-TITLE HLWR Build
+TITLE HLWR Compile
 @ECHO off
 COLOR 0A
 CLS

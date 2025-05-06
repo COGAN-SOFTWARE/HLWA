@@ -1,4 +1,5 @@
 .vs/
 bin/
+build/
 premake5.exe
 HLWR/obj/

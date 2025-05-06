@@ -11,9 +11,15 @@
 
 ##### Visual Studio (+ premake5)
 
-> This project uses premake5 to build the visual studio files; simply download `premake5.exe` directly into this and run `build.bat`; **If you do not want to use premake5, this project comes with the vs22 solution & project files in the source code**. To compile, just build either for Debug or Release directly within visual studio.
+> This project uses premake5 to build the visual studio files; simply download `premake5.exe` directly into this and run `build-premake5-vs22-clang.bat`; **If you do not want to use premake5, this project comes with the vs22 solution & project files in the source code**. To compile, just build either for Debug or Release directly within visual studio.
+
+##### Visual Studio (+ CMake)
+
+> Run `build-cmake-vs22-clang.bat`, this will generate all the files under a new folder `build`. Open the `HWLR.sln` in that folder and build from there. The compiled static library is placed similarly as before but <root> is now <root>/build.
 
 ##### CMake
+
+> **As of now, I have not fixed the non-vs22 compiler bugs; this option does not work without additional cmake code/cli**. Run `build-cmake-clang.bat` or `build-cmake-gcc.bat`, this will generate all the files under a new folder `build`. Then run either `compile-cmake-debug.bat` or `compile-cmake-release.bat`. The compiled static library is placed similarly as before but <root> is now <root>/build.
 
 > TODO
 
