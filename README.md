@@ -26,6 +26,9 @@
 **Q**: Can I use UTF8 instead of UTF16 strings?
 **A**: Yes you can, define `CS_GWR_USEUTF8STRINGS` before including this header file.
 
+**Q**: Will `Windows.h` leak into my project?
+**A**: No, in a previous update converting from single-header API to a simple lightweight API, we moved the `#include` statement into the implementation file and forward declared `HKEY` internally (this is currently still visible though; no direct windows functionality however).
+
 ---
 ### How To Use
 
