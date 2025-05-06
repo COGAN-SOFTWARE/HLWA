@@ -17,7 +17,7 @@
 
 > Run `build-cmake-vs22-clang.bat`, this will generate all the files under a new folder `build`. Open the `HWLR.sln` in that folder and build from there. The compiled static library is placed similarly as before but <root> is now <root>/build.
 
-##### CMake
+##### CMake (clang/gcc) **DOES NOT CURRENTLY WORK**
 
 > **As of now, I have not fixed the non-vs22 compiler bugs; this option does not work without additional cmake code/cli**. Run `build-cmake-clang.bat` or `build-cmake-gcc.bat`, this will generate all the files under a new folder `build`. Then run either `compile-cmake-debug.bat` or `compile-cmake-release.bat`. The compiled static library is placed similarly as before but <root> is now <root>/build.
 
@@ -34,6 +34,9 @@
 
 **Q**: Will `Windows.h` leak into my project?
 **A**: No, in a previous update converting from single-header API to a simple lightweight API, we moved the `#include` statement into the implementation file and forward declared `HKEY` internally (this is currently still visible though; no direct windows functionality however).
+
+**Q**: When will standalone CMake clang/gcc work?
+**A**: I'm not focusing on those issues right now, however if anyone has a solution to the cli errors when compiling the CMake project using standalone compilers, please reach out to us.
 
 ---
 ### How To Use
