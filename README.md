@@ -6,6 +6,11 @@
 
 > HLWR is designed as a single-header library which means there's no need to build/compile the project. The ability to build a solution & project from premake5 is purely for future-proofing in case this goes beyond single-header implementation; simply just include it in your source code or add it to your search path(s).
 
+# FAQ
+
+**Q**: Can I use UTF8 instead of UTF16 strings?
+**A**: Yes you can, define `CS_GWR_USEUTF8STRINGS` before including this header file.
+
 # How To Use
 
 > HLWR is designed to be super user friendly. We separate the logic identity of the registry into two main objects; keys and entries are the two main objects you'll be handling. But before you handle those, it's a good thing to check if you have admin privileges. This is a built-in feature as a simple function call: `CoganSoftware::HLWR::IsAdmin()`; returns a CS_GWR_R bit that can either be `CS_GWR_R_SUCCESS` or `CS_GWR_R_NOTADMIN`. Keys are those folder-like items you can view in the registery editor; then there's what we call "entries" (not officially named that by Windows), it's the items that appear as a name type value trio inside keys.

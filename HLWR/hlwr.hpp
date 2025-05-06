@@ -15,7 +15,13 @@
 #define CS_GWR_R_INVALID             0b01000000 // Typically used if the system cannot retrieve a key/value; suggestive if the program doesn't have the permissions.
 #define CS_GWR_R_KEYALREADYEXISTS    0b10000000 // This gets paired with CS_GWR_R_SUCCESS.
 
+#if defined(CS_GWR_USEUTF8STRINGS)
+#define CS_GWR_DEFAULTENTRY          ""
+#define CS_GWR_STRING                std::string
+#else
 #define CS_GWR_DEFAULTENTRY          L""        // Default entry in a key uses no string as the name.
+#define CS_GWR_STRING                std::wstring
+#endif
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -47,14 +53,18 @@ namespace CoganSoftware::HLWR {
 	};
 	struct Entry {
 	public:
-		Entry(const std::wstring& _name, EntryType _type, uint32_t* inDword, std::vector<uint8_t>* inBinary, std::wstring* inString) {};
+		Entry(const CS_GWR_STRING& _name, EntryType _type, uint32_t* inDword, std::vector<uint8_t>* inBinary, CS_GWR_STRING* inString) : name{ _name }, type{ type } {
+			creationResult = SetData(inDword, inBinary, inString);
+		};
 		~Entry() {};
+		
+		CS_GWR_R GetCreationResult() { return creationResult; };
 
 		void ForceDirty() { dirty = true; };
 		bool IsDirty() const { return dirty; };
 
-		const std::wstring& GetName() const { return name; };
-		void SetName(const std::wstring& _name) { name = _name; dirty = true; };
+		const CS_GWR_STRING& GetName() const { return name; };
+		void SetName(const CS_GWR_STRING& _name) { name = _name; dirty = true; };
 
 		EntryType GetType() { return type; };
 		// Setting the type also clears the data.
@@ -62,12 +72,12 @@ namespace CoganSoftware::HLWR {
 			type = _type;
 			static uint32_t defDword = 0;
 			static std::vector<uint8_t> defBinary{};
-			static std::wstring defString = L"";
+			static CS_GWR_STRING defString = CS_GWR_DEFAULTENTRY;
 			CS_GWR_R r = SetData(&defDword, &defBinary, &defString);
 			dirty = true;
 			return r;
 		};
-		CS_GWR_R GetData(uint32_t* outDword, std::vector<uint8_t>* outBinary, std::wstring* outString) {
+		CS_GWR_R GetData(uint32_t* outDword, std::vector<uint8_t>* outBinary, CS_GWR_STRING* outString) {
 			switch (type) {
 			case(EntryType::DWORD):
 				if (outDword == nullptr) return CS_GWR_R_INVALIDARGS;
@@ -79,12 +89,12 @@ namespace CoganSoftware::HLWR {
 				break;
 			case(EntryType::STRING):
 				if (outString == nullptr) return CS_GWR_R_INVALIDARGS;
-				*outString = std::get<std::wstring>(data);
+				*outString = std::get<CS_GWR_STRING>(data);
 				break;
 			}
 			return CS_GWR_R_SUCCESS;
 		}
-		CS_GWR_R SetData(uint32_t* inDword, std::vector<uint8_t>* inBinary, std::wstring* inString) {
+		CS_GWR_R SetData(uint32_t* inDword, std::vector<uint8_t>* inBinary, CS_GWR_STRING* inString) {
 			switch (type) {
 			case(EntryType::DWORD):
 				if (inDword == nullptr) return CS_GWR_R_INVALIDARGS;
@@ -103,10 +113,11 @@ namespace CoganSoftware::HLWR {
 			return CS_GWR_R_SUCCESS;
 		}
 	private:
-		std::wstring name;
-		bool dirty = false;
+		CS_GWR_STRING name;
+		CS_GWR_R creationResult;
 		EntryType type;
-		std::variant<uint32_t, std::vector<uint8_t>, std::wstring> data{};
+		std::variant<uint32_t, std::vector<uint8_t>, CS_GWR_STRING> data{};
+		bool dirty = false;
 	};
 	
 	enum struct RootKey {
@@ -119,7 +130,7 @@ namespace CoganSoftware::HLWR {
 	};
 	class Key {
 	public:
-		Key(const std::wstring& _path, RootKey root) : path{ _path } {
+		Key(const CS_GWR_STRING& _path, RootKey root) : path{ _path } {
 			switch (root) {
 			case(RootKey::ClassesRoot):
 				parent = HKEY_CLASSES_ROOT;
@@ -152,20 +163,32 @@ namespace CoganSoftware::HLWR {
 		CS_GWR_R GetCreationResult() { return creationResult; };
 
 		CS_GWR_R Load() {
+#if defined(CS_GWR_USEUTF8STRINGS)
+			char subKeyName[256];
+#else
 			wchar_t subKeyName[256];
+#endif
 			DWORD subKeyLength;
 			DWORD i = 0;
 			while (true) {
 				subKeyLength = sizeof(subKeyName);
-				HRESULT r = RegEnumKeyEx(key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
+#if defined(CS_GWR_USEUTF8STRINGS)
+				HRESULT r = RegEnumKeyExA(key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
+#else
+				HRESULT r = RegEnumKeyExW(key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
+#endif
 				if (r == ERROR_NO_MORE_ITEMS) break;
 				if (r != ERROR_SUCCESS) {
 					return CS_GWR_R_INVALID;
 				}
 				childKeys.push_back({ subKeyName, key });
 			}
-
+			
+#if defined(CS_GWR_USEUTF8STRINGS)
+			char valueName[256];
+#else
 			wchar_t valueName[256];
+#endif
 			BYTE data[1024];
 			DWORD valueLength;
 			DWORD dataLength;
@@ -174,7 +197,11 @@ namespace CoganSoftware::HLWR {
 			while (true) {
 				valueLength = sizeof(valueName);
 				dataLength = sizeof(data);
-				HRESULT r = RegEnumValue(key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
+#if defined(CS_GWR_USEUTF8STRINGS)
+				HRESULT r = RegEnumValueA(key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
+#else
+				HRESULT r = RegEnumValueW(key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
+#endif
 				if (r == ERROR_NO_MORE_ITEMS) break;
 				if (r != ERROR_SUCCESS) {
 					return CS_GWR_R_INVALID;
@@ -187,7 +214,11 @@ namespace CoganSoftware::HLWR {
 					std::vector<uint8_t> bin(reinterpret_cast<uint8_t*>(data), reinterpret_cast<uint8_t*>(data + dataLength));
 					entries.push_back({ valueName, EntryType::BINARY, nullptr, &bin, nullptr });
 				} else if (type == REG_SZ) {
-					std::wstring str(reinterpret_cast<wchar_t*>(data), dataLength / sizeof(wchar_t));
+#if defined(CS_GWR_USEUTF8STRINGS)
+					CS_GWR_STRING str(reinterpret_cast<char*>(data), dataLength / sizeof(char));
+#else
+					CS_GWR_STRING str(reinterpret_cast<wchar_t*>(data), dataLength / sizeof(wchar_t));
+#endif
 					entries.push_back({ valueName, EntryType::STRING, nullptr, nullptr, &str });
 				} else {
 					return CS_GWR_R_INVALIDTYPE;
@@ -206,24 +237,36 @@ namespace CoganSoftware::HLWR {
 			return CS_GWR_R_SUCCESS;
 		};
 		CS_GWR_R Submit() {
-			std::vector<std::wstring> diffChildKeys{};
-			std::vector<std::wstring> diffEntries{};
+			std::vector<CS_GWR_STRING> diffChildKeys{};
+			std::vector<CS_GWR_STRING> diffEntries{};
 
 			if (dirty) {
+#if defined(CS_GWR_USEUTF8STRINGS)
+				char subKeyName[256];
+#else
 				wchar_t subKeyName[256];
+#endif
 				DWORD subKeyLength;
 				DWORD i = 0;
 				while (true) {
 					subKeyLength = sizeof(subKeyName);
-					HRESULT r = RegEnumKeyEx(key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
+#if defined(CS_GWR_USEUTF8STRINGS)
+					HRESULT r = RegEnumKeyExA(key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
+#else
+					HRESULT r = RegEnumKeyExW(key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
+#endif
 					if (r == ERROR_NO_MORE_ITEMS) break;
 					if (r != ERROR_SUCCESS) {
 						return CS_GWR_R_INVALID;
 					}
 					diffChildKeys.push_back({ subKeyName });
 				}
-
+				
+#if defined(CS_GWR_USEUTF8STRINGS)
+				char valueName[256];
+#else
 				wchar_t valueName[256];
+#endif
 				BYTE data[1024];
 				DWORD valueLength;
 				DWORD dataLength;
@@ -232,7 +275,11 @@ namespace CoganSoftware::HLWR {
 				while (true) {
 					valueLength = sizeof(valueName);
 					dataLength = sizeof(data);
-					HRESULT r = RegEnumValue(key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
+#if defined(CS_GWR_USEUTF8STRINGS)
+					HRESULT r = RegEnumValueA(key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
+#else
+					HRESULT r = RegEnumValueW(key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
+#endif
 					if (r == ERROR_NO_MORE_ITEMS) break;
 					if (r != ERROR_SUCCESS) {
 						return CS_GWR_R_INVALID;
@@ -246,7 +293,7 @@ namespace CoganSoftware::HLWR {
 				
 				static uint32_t dword;
 				static std::vector<uint8_t> bin;
-				static std::wstring str;
+				static CS_GWR_STRING str;
 				CS_GWR_R er = entry.GetData(&dword, &bin, &str);
 				if (er != CS_GWR_R_SUCCESS) return er;
 
@@ -255,13 +302,25 @@ namespace CoganSoftware::HLWR {
 				HRESULT r;
 				switch (type) {
 				case(EntryType::DWORD):
-					r = RegSetValueEx(key, entry.GetName().c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(dword), sizeof(uint32_t));
+#if defined(CS_GWR_USEUTF8STRINGS)
+					r = RegSetValueExA(key, entry.GetName().c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(dword), sizeof(uint32_t));
+#else
+					r = RegSetValueExW(key, entry.GetName().c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(dword), sizeof(uint32_t));
+#endif
 					break;
 				case(EntryType::BINARY):
-					r = RegSetValueEx(key, entry.GetName().c_str(), 0, REG_SZ, bin.data(), static_cast<DWORD>(bin.size()));
+#if defined(CS_GWR_USEUTF8STRINGS)
+					r = RegSetValueExA(key, entry.GetName().c_str(), 0, REG_SZ, bin.data(), static_cast<DWORD>(bin.size()));
+#else
+					r = RegSetValueExW(key, entry.GetName().c_str(), 0, REG_SZ, bin.data(), static_cast<DWORD>(bin.size()));
+#endif
 					break;
 				case(EntryType::STRING):
-					r = RegSetValueEx(key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(wchar_t)));
+#if defined(CS_GWR_USEUTF8STRINGS)
+					r = RegSetValueExA(key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(char)));
+#else
+					r = RegSetValueExW(key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(wchar_t)));
+#endif
 					break;
 				}
 				if (r != ERROR_SUCCESS) return CS_GWR_R_INVALID;
@@ -280,12 +339,20 @@ namespace CoganSoftware::HLWR {
 			}
 
 			for (auto& diff : diffEntries) {
-				HRESULT r = RegDeleteValue(key, diff.c_str());
+#if defined(CS_GWR_USEUTF8STRINGS)
+				HRESULT r = RegDeleteValueA(key, diff.c_str());
+#else
+				HRESULT r = RegDeleteValueW(key, diff.c_str());
+#endif
 				if (r != ERROR_SUCCESS) return CS_GWR_R_INVALID;
 			}
 
 			for (auto& diff : diffChildKeys) {
-				HRESULT r = RegDeleteTree(key, diff.c_str());
+#if defined(CS_GWR_USEUTF8STRINGS)
+				HRESULT r = RegDeleteTreeA(key, diff.c_str());
+#else
+				HRESULT r = RegDeleteTreeW(key, diff.c_str());
+#endif
 				if (r != ERROR_SUCCESS) return CS_GWR_R_INVALID;
 			}
 
@@ -301,7 +368,11 @@ namespace CoganSoftware::HLWR {
 			return CS_GWR_R_SUCCESS;
 		}
 		CS_GWR_R EraseTree() {
-			HRESULT r = RegDeleteTree(parent, path.c_str());
+#if defined(CS_GWR_USEUTF8STRINGS)
+			HRESULT r = RegDeleteTreeA(parent, path.c_str());
+#else
+			HRESULT r = RegDeleteTreeW(parent, path.c_str());
+#endif
 			if (r != ERROR_SUCCESS) return CS_GWR_R_INVALID;
 			return CS_GWR_R_SUCCESS;
 		};
@@ -309,7 +380,7 @@ namespace CoganSoftware::HLWR {
 		void ForceDirty() { dirty = true; };
 		bool IsDirty() const { return dirty; };
 
-		const std::wstring& GetPath() const { return path; };
+		const CS_GWR_STRING& GetPath() const { return path; };
 		
 		void Clear() {
 			childKeys.clear();
@@ -317,7 +388,7 @@ namespace CoganSoftware::HLWR {
 			dirty = true;
 		};
 
-		Key& AddChildKey(const std::wstring& name) {
+		Key& AddChildKey(const CS_GWR_STRING& name) {
 			for (size_t i = 0; i < childKeys.size(); i++) {
 				if (childKeys[i].GetPath() == name) {
 					return childKeys[i];
@@ -343,7 +414,7 @@ namespace CoganSoftware::HLWR {
 			}
 			return CS_GWR_R_SUCCESS;
 		};
-		CS_GWR_R RemoveChildKey(const std::wstring& keyName) {
+		CS_GWR_R RemoveChildKey(const CS_GWR_STRING& keyName) {
 			for (size_t i = 0; i < childKeys.size(); i++) {
 				if (childKeys[i].GetPath() == keyName) {
 					childKeys.erase(childKeys.begin() + i);
@@ -353,7 +424,7 @@ namespace CoganSoftware::HLWR {
 			}
 			return CS_GWR_R_KEYNOTFOUND;
 		};
-		CS_GWR_R RemoveEntry(const std::wstring& entryName) {
+		CS_GWR_R RemoveEntry(const CS_GWR_STRING& entryName) {
 			for (size_t i = 0; i < entries.size(); i++) {
 				if (entries[i].GetName() == entryName) {
 					entries.erase(entries.begin() + i);
@@ -367,18 +438,26 @@ namespace CoganSoftware::HLWR {
 		const std::vector<Key>& GetChildKeys() const { return childKeys; };
 		const std::vector<Entry>& GetEntries() const { return entries; };
 	private:
-		Key(const std::wstring& _path, HKEY _parent = HKEY_CLASSES_ROOT) : path{ _path }, parent{ _parent } {
+		Key(const CS_GWR_STRING& _path, HKEY _parent = HKEY_CLASSES_ROOT) : path{ _path }, parent{ _parent } {
 			InitializeKey();
 		};
 
 		void InitializeKey() {
+#if defined(CS_GWR_USEUTF8STRINGS)
+			const size_t pos = path.find("\\\\");
+#else
 			const size_t pos = path.find(L"\\\\");
+#endif
 			if (pos != std::string::npos) {
 				creationResult = CS_GWR_R_INVALID;
 			}
 
 			DWORD disposition;
-			HRESULT r = RegCreateKeyEx(parent, path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &key, &disposition);
+#if defined(CS_GWR_USEUTF8STRINGS)
+			HRESULT r = RegCreateKeyExA(parent, path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &key, &disposition);
+#else
+			HRESULT r = RegCreateKeyExW(parent, path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &key, &disposition);
+#endif
 			if (disposition == REG_OPENED_EXISTING_KEY) {
 				creationResult = CS_GWR_R_KEYALREADYEXISTS | CS_GWR_R_SUCCESS;
 				return;
@@ -389,7 +468,7 @@ namespace CoganSoftware::HLWR {
 
 		HKEY parent;
 		HKEY key;
-		std::wstring path;
+		CS_GWR_STRING path;
 		std::vector<Key> childKeys;
 		std::vector<Entry> entries;
 		CS_GWR_R creationResult;
