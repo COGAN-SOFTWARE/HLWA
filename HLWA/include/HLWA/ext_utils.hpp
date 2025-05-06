@@ -6,7 +6,7 @@
 
 #if defined(_WIN32)
 namespace CoganSoftware::HLWA::Utils {
-	static CS_HLWA_R IsAdmin();
+	CS_HLWA_R IsAdmin();
 }
 #endif
 #endif

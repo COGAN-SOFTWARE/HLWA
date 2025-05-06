@@ -34,3 +34,115 @@ project "HLWA"
       projectDir.."/**.cpp",
       projectDir.."/**.hpp"
    }
+
+project "GlasswareExample"
+   local projectDir = "examples/GlasswareExample"
+   location (projectDir)
+   kind "ConsoleApp"
+   flags { "MultiProcessorCompile" }
+
+   files {
+      projectDir.."/**.cpp",
+      projectDir.."/**.hpp"
+   }
+   
+   includedirs {
+      "HLWA/include"
+   }
+   links {
+      "HLWA"
+   }
+
+   filter "configurations:Debug"
+      libdirs {
+         "bin/HLWA/Debug-windows-x86_64"
+      }
+
+   filter "configurations:Release"
+      libdirs {
+         "bin/HLWA/Release-windows-x86_64"
+      }
+
+project "JumplistExample"
+   local projectDir = "examples/JumplistExample"
+   location (projectDir)
+   kind "ConsoleApp"
+   flags { "MultiProcessorCompile" }
+
+   files {
+      projectDir.."/**.cpp",
+      projectDir.."/**.hpp"
+   }
+   
+   includedirs {
+      "HLWA/include"
+   }
+   links {
+      "HLWA"
+   }
+
+   filter "configurations:Debug"
+      libdirs {
+         "bin/HLWA/Debug-windows-x86_64"
+      }
+
+   filter "configurations:Release"
+      libdirs {
+         "bin/HLWA/Release-windows-x86_64"
+      }
+
+project "RegistryExample"
+   local projectDir = "examples/RegistryExample"
+   location (projectDir)
+   kind "ConsoleApp"
+   flags { "MultiProcessorCompile" }
+
+   files {
+      projectDir.."/**.cpp",
+      projectDir.."/**.hpp"
+   }
+   
+   includedirs {
+      "HLWA/include"
+   }
+   links {
+      "HLWA"
+   }
+
+   filter "configurations:Debug"
+      libdirs {
+         "bin/HLWA/Debug-windows-x86_64"
+      }
+
+   filter "configurations:Release"
+      libdirs {
+         "bin/HLWA/Release-windows-x86_64"
+      }
+
+project "TaskbarExample"
+   local projectDir = "examples/TaskbarExample"
+   location (projectDir)
+   kind "ConsoleApp"
+   flags { "MultiProcessorCompile" }
+
+   files {
+      projectDir.."/**.cpp",
+      projectDir.."/**.hpp"
+   }
+   
+   includedirs {
+      "HLWA/include"
+   }
+   links {
+      "HLWA"
+   }
+
+   filter "configurations:Debug"
+      libdirs {
+         "bin/HLWA/Debug-windows-x86_64"
+      }
+
+   filter "configurations:Release"
+      libdirs {
+         "bin/HLWA/Release-windows-x86_64"
+      }

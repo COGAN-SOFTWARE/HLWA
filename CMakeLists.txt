@@ -7,17 +7,14 @@ set(CMAKE_GENERATOR_PLATFORM x64)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWA)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWA)
+
 if (MSVC)
     add_compile_options(/MP)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wall -Wextra -Wno-unused-parameter)
 endif()
-
-
-set(CMAKE_CXX_COMPILER "clang++")
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWA)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/HLWA)
 
 file(GLOB_RECURSE HLWA_SOURCES CONFIGURE_DEPENDS HLWA/*.cpp HLWA/*.hpp)
 
@@ -34,3 +31,8 @@ target_compile_options(HLWA PRIVATE
 )
 
 target_compile_definitions(HLWA PRIVATE CS_HLWA_E_ALL)
+
+add_subdirectory(examples/GlasswareExample)
+add_subdirectory(examples/JumplistExample)
+add_subdirectory(examples/RegistryExample)
+add_subdirectory(examples/TaskbarExample)

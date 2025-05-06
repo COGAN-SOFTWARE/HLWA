@@ -19,7 +19,7 @@ namespace CoganSoftware::HLWA::Registry {
 	};
 	struct Entry {
 	public:
-		Entry(const CS_HLWA_STRING& _name, EntryType _type, uint32_t* inDword, std::vector<uint8_t>* inBinary, CS_HLWA_STRING* inString);
+		Entry(const CS_HLWA_STRING& p_name, EntryType p_type, uint32_t* p_inDword, std::vector<uint8_t>* p_inBinary, CS_HLWA_STRING* p_inString);
 		~Entry() {};
 		
 		CS_HLWA_R GetCreationResult() const;
@@ -28,19 +28,18 @@ namespace CoganSoftware::HLWA::Registry {
 		bool IsDirty() const;
 
 		const CS_HLWA_STRING& GetName() const;
-		void SetName(const CS_HLWA_STRING& _name);
+		void SetName(const CS_HLWA_STRING& p_name);
 
 		EntryType GetType();
-		// Setting the type also clears the data.
-		CS_HLWA_R SetType(EntryType _type);
-		CS_HLWA_R GetData(uint32_t* outDword, std::vector<uint8_t>* outBinary, CS_HLWA_STRING* outString);
-		CS_HLWA_R SetData(uint32_t* inDword, std::vector<uint8_t>* inBinary, CS_HLWA_STRING* inString);
+		CS_HLWA_R SetType(EntryType p_type); // Clears data.
+		CS_HLWA_R GetData(uint32_t* p_outDword, std::vector<uint8_t>* p_outBinary, CS_HLWA_STRING* p_outString);
+		CS_HLWA_R SetData(uint32_t* p_inDword, std::vector<uint8_t>* p_inBinary, CS_HLWA_STRING* p_inString);
 	private:
-		CS_HLWA_STRING name;
-		CS_HLWA_R creationResult;
-		EntryType type;
-		std::variant<uint32_t, std::vector<uint8_t>, CS_HLWA_STRING> data{};
-		bool dirty = false;
+		CS_HLWA_STRING m_name;
+		CS_HLWA_R m_creationResult;
+		EntryType m_type;
+		std::variant<uint32_t, std::vector<uint8_t>, CS_HLWA_STRING> m_data{};
+		bool m_dirty = false;
 	};
 
 	enum struct RootKey {
@@ -53,9 +52,9 @@ namespace CoganSoftware::HLWA::Registry {
 	};
 	class Key {
 	public:
-		Key(const CS_HLWA_STRING& _path, RootKey root);
-		Key(const Key& other);
-		Key(Key&& other) noexcept;
+		Key(const CS_HLWA_STRING& p_path, RootKey p_root = RootKey::ClassesRoot);
+		Key(const Key& p_other);
+		Key(Key&& p_other) noexcept;
 		~Key();
 		
 		CS_HLWA_R GetCreationResult() const;
@@ -73,41 +72,41 @@ namespace CoganSoftware::HLWA::Registry {
 		
 		void Clear();
 
-		Key& AddChildKey(const CS_HLWA_STRING& name);
-		CS_HLWA_R AddEntry(Entry& entry);
-		CS_HLWA_R RemoveChildKey(const CS_HLWA_STRING& keyName);
-		CS_HLWA_R RemoveEntry(const CS_HLWA_STRING& entryName);
+		size_t AddChildKey(const CS_HLWA_STRING& p_name);
+		size_t AddEntry(Entry& p_entry);
+		CS_HLWA_R RemoveChildKey(const CS_HLWA_STRING& p_keyName);
+		CS_HLWA_R RemoveEntry(const CS_HLWA_STRING& p_entryName);
 		
 		const std::vector<Key>& GetChildKeys() const;
 		const std::vector<Entry>& GetEntries() const;
 
-		Key& operator=(const Key& other) {
-			if (this != &other) {
-				parent = other.parent;
-				key = other.key;
-				path = other.path;
-				childKeys = other.childKeys;
-				entries = other.entries;
-				creationResult = other.creationResult;
-				dirty = other.dirty;
+		Key& operator=(const Key& p_other) {
+			if (this != &p_other) {
+				m_parent = p_other.m_parent;
+				m_key = p_other.m_key;
+				m_path = p_other.m_path;
+				m_childKeys = p_other.m_childKeys;
+				m_entries = p_other.m_entries;
+				m_creationResult = p_other.m_creationResult;
+				m_dirty = p_other.m_dirty;
 
-				parent->users++;
-				key->users++;
+				m_parent->m_users++;
+				m_key->m_users++;
 			}
 			return *this;
 		}
-		Key& operator=(Key&& other) noexcept {
-			if (this != &other) {
-				parent = other.parent;
-				key = other.key;
-				path = other.path;
-				childKeys = other.childKeys;
-				entries = other.entries;
-				creationResult = other.creationResult;
-				dirty = other.dirty;
+		Key& operator=(Key&& p_other) noexcept {
+			if (this != &p_other) {
+				m_parent = p_other.m_parent;
+				m_key = p_other.m_key;
+				m_path = p_other.m_path;
+				m_childKeys = p_other.m_childKeys;
+				m_entries = p_other.m_entries;
+				m_creationResult = p_other.m_creationResult;
+				m_dirty = p_other.m_dirty;
 
-				parent->users++;
-				key->users++;
+				m_parent->m_users++;
+				m_key->m_users++;
 			}
 			return *this;
 		}
@@ -116,21 +115,21 @@ namespace CoganSoftware::HLWA::Registry {
 			KeyUser();
 			~KeyUser();
 
-			HKEY key = nullptr;
-			int users;
+			HKEY m_key = nullptr;
+			int m_users;
 		};
 
-		Key(const CS_HLWA_STRING& _path, KeyUser* _parent);
+		Key(const CS_HLWA_STRING& p_path, KeyUser* p_parent);
 
 		void InitializeKey();
 
-		KeyUser* parent = nullptr;
-		KeyUser* key = nullptr;
-		CS_HLWA_STRING path;
-		std::vector<Key> childKeys;
-		std::vector<Entry> entries;
-		CS_HLWA_R creationResult;
-		bool dirty = false;
+		KeyUser* m_parent = nullptr;
+		KeyUser* m_key = nullptr;
+		CS_HLWA_STRING m_path;
+		std::vector<Key> m_childKeys;
+		std::vector<Entry> m_entries;
+		CS_HLWA_R m_creationResult;
+		bool m_dirty = false;
 	};
 }
 #endif

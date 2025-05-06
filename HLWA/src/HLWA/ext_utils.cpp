@@ -5,7 +5,7 @@
 #include <Windows.h>
 
 namespace CoganSoftware::HLWA::Utils {
-	static CS_HLWA_R IsAdmin() {
+	CS_HLWA_R IsAdmin() {
 		BOOL isElevated = FALSE;
 		HANDLE token = NULL;
 
@@ -21,7 +21,7 @@ namespace CoganSoftware::HLWA::Utils {
 			return CS_HLWA_R_NOTADMIN;
 		}
 
-		return CS_HLWA_R_SUCCESS;
+		return (isElevated == true) ? CS_HLWA_R_SUCCESS : CS_HLWA_R_NOTADMIN;
 	}
 }
 #endif
