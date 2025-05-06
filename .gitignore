@@ -2,5 +2,5 @@
 bin/
 build/
 premake5.exe
-HLWR/obj/
-HLWR/HLWR.vcxproj.user
+HLWA/obj/
+HLWA/HLWA.vcxproj.user

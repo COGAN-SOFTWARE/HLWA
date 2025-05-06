@@ -1,13 +1,15 @@
-# HLWR
+# HLWA
 ---
 ### About
 
-> HLWR stands for High-Level Windows Registry and is an API developed for C++ developers to quickly build code to access the windows registry for projects.
+> HLWA stands for High-Level Windows Abstraction and is an API developed for C++ developers to quickly build code to access the windows API for projects.
+
+> HLWA was renamed from HLWR because now it's an abstraction API I can put more things then just the registry into.
 
 ---
 ### How To Compile
 
-> **Note**: If you want to user the compiled static library, output build location is <root>/bin/HLWR/<buildcfg>-<system>-<architecture>/HLWR.lib.
+> **Note**: If you want to user the compiled static library, output build location is <root>/bin/HLWA/<buildcfg>-<system>-<architecture>/HLWA.lib.
 
 ##### Visual Studio (+ premake5)
 
@@ -41,13 +43,13 @@
 ---
 ### How To Use
 
-> HLWR is designed to be super user friendly. We separate the logic identity of the registry into two main objects; keys and entries are the two main objects you'll be handling. But before you handle those, it's a good thing to check if you have admin privileges. This is a built-in feature as a simple function call: `CoganSoftware::HLWR::IsAdmin()`; returns a CS_GWR_R bit that can either be `CS_GWR_R_SUCCESS` or `CS_GWR_R_NOTADMIN`. Keys are those folder-like items you can view in the registery editor; then there's what we call "entries" (not officially named that by Windows), it's the items that appear as a name type value trio inside keys.
+> HLWA is designed to be super user friendly. We separate the logic identity of the registry into two main objects; keys and entries are the two main objects you'll be handling. But before you handle those, it's a good thing to check if you have admin privileges. This is a built-in feature as a simple function call: `CoganSoftware::HLWA::IsAdmin()`; returns a CS_GWR_R bit that can either be `CS_GWR_R_SUCCESS` or `CS_GWR_R_NOTADMIN`. Keys are those folder-like items you can view in the registery editor; then there's what we call "entries" (not officially named that by Windows), it's the items that appear as a name type value trio inside keys.
 
 > To begin, here's an example of opening a key and adding an entry.
 
 ```cpp
-using <hlwr.hpp>
-using namespace CoganSoftware::HLWR
+using <HLWA.hpp>
+using namespace CoganSoftware::HLWA
 
 int main() {
 	if (!(IsAdmin() & CS_GWR_R_SUCCESS)) return 1; // Failed to start as admin.

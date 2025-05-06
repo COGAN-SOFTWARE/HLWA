@@ -26,7 +26,7 @@
 #if defined(_WIN32)
 typedef struct HKEY__ *HKEY; // Forward declaration.
 
-namespace CoganSoftware::HLWR {
+namespace CoganSoftware::HLWA {
 	static CS_GWR_R IsAdmin();
 
 	enum struct EntryType {

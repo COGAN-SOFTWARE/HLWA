@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A2D9857C-8E10-870D-37FD-6C102313030F}</ProjectGuid>
+    <ProjectGuid>{91D9857C-7D10-870D-26FD-6C101213030F}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>HLWR</RootNamespace>
+    <RootNamespace>HLWA</RootNamespace>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -41,15 +41,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\bin\HLWR\Debug-windows-x86_64\</OutDir>
+    <OutDir>..\bin\HLWA\Debug-windows-x86_64\</OutDir>
     <IntDir>obj\Debug\</IntDir>
-    <TargetName>HLWR</TargetName>
+    <TargetName>HLWA</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\bin\HLWR\Release-windows-x86_64\</OutDir>
+    <OutDir>..\bin\HLWA\Release-windows-x86_64\</OutDir>
     <IntDir>obj\Release\</IntDir>
-    <TargetName>HLWR</TargetName>
+    <TargetName>HLWA</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -94,10 +94,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\HLWR\hlwr.hpp" />
+    <ClInclude Include="include\HLWA\hlwa.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\HLWR\hlwr.cpp" />
+    <ClCompile Include="src\HLWA\hlwa.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

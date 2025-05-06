@@ -1,4 +1,4 @@
-workspace "HLWR"
+workspace "HLWA"
    architecture "x64"
    configurations {
       "Debug", "Release"
@@ -22,8 +22,8 @@ workspace "HLWR"
       optimize "Speed"
       symbols "Off"
 
-project "HLWR"
-   local projectDir = "HLWR"
+project "HLWA"
+   local projectDir = "HLWA"
    location (projectDir)
    kind "StaticLib"
    flags { "MultiProcessorCompile" }

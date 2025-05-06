@@ -1,9 +1,9 @@
-#include "../../include/HLWR/hlwr.hpp"
+#include "../../include/HLWA/hlwa.hpp"
 
 #if defined(_WIN32)
 #include <Windows.h>
 
-namespace CoganSoftware::HLWR {
+namespace CoganSoftware::HLWA {
 	static CS_GWR_R IsAdmin() {
 		BOOL isElevated = FALSE;
 		HANDLE token = NULL;
