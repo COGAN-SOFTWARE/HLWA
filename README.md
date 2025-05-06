@@ -10,7 +10,7 @@
 ### How To Compile
 
 > **Note**: If you want to user the compiled static library, output build location is <root>/bin/HLWA/<buildcfg>-<system>-<architecture>/HLWA.lib.<br>
-> **Note**: Be aware, by default, `CS_HLWA_E_ALL` is defined in both `premake5.lua` & `CMakeLists.txt`. If you want to only compile a specific extension, edit the preprocessor defines or include the project in the same solution as your project and call `#define ...` before including `HLWA/core.hpp`.
+> **Note**: Be aware, by default, `CS_HLWA_E_ALL` is defined in both `premake5.lua` & `CMakeLists.txt`. If you want to only compile a specific extension, edit the preprocessor defines or include the project in the same solution as your project and call `#define ...` before including `HLWA/core.hpp`; this is all just recommended, you can still include it and then define which extensions you want to use when including the header.
 
 ##### Visual Studio (+ premake5)
 
