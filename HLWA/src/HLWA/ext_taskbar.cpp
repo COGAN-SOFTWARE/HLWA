@@ -102,37 +102,51 @@ namespace CoganSoftware::HLWA::Taskbar {
 	}
 	CS_HLWA_R EnableProgress(Glassware::Glassware* p_glassware) {
 #if defined(_WIN32)
-		EnableProgress(p_glassware->GetHandle());
+		return EnableProgress(p_glassware->GetHandle());
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 	CS_HLWA_R DisableProgress(Glassware::Glassware* p_glassware) {
 #if defined(_WIN32)
-		DisableProgress(p_glassware->GetHandle());
+		return DisableProgress(p_glassware->GetHandle());
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 	CS_HLWA_R SetProgressValue(Glassware::Glassware* p_glassware, size_t p_value, size_t p_total) {
 #if defined(_WIN32)
-		SetProgressValue(p_glassware->GetHandle(), p_value, p_total);
+		return SetProgressValue(p_glassware->GetHandle(), p_value, p_total);
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 	CS_HLWA_R SpinProgress(Glassware::Glassware* p_glassware) {
 #if defined(_WIN32)
-		SpinProgress(p_glassware->GetHandle());
+		return SpinProgress(p_glassware->GetHandle());
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 	CS_HLWA_R PauseProgress(Glassware::Glassware* p_glassware) {
 #if defined(_WIN32)
-		PauseProgress(p_glassware->GetHandle());
+		return PauseProgress(p_glassware->GetHandle());
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 	CS_HLWA_R ErrorProgress(Glassware::Glassware* p_glassware) {
 #if defined(_WIN32)
-		ErrorProgress(p_glassware->GetHandle());
+		return ErrorProgress(p_glassware->GetHandle());
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 	CS_HLWA_R SetTooltip(Glassware::Glassware* p_glassware, const CS_HLWA_STRING& p_value) {
 #if defined(_WIN32)
-		SetTooltip(p_glassware->GetHandle(), p_value);
+		return SetTooltip(p_glassware->GetHandle(), p_value);
+#else
+		return CS_HLWA_R_SUCCESS;
 #endif
 	}
 #endif

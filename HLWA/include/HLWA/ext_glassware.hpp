@@ -471,7 +471,7 @@ namespace CoganSoftware::HLWA::Glassware {
 		std::vector<Glassware*> m_children;
 		void* m_userPtr;
 		
-		CS_HLWA_GW_F m_flags;
+		CS_HLWA_GW_F m_flags = 0;
 
 		int m_posX;
 		int m_posY;

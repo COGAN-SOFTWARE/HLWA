@@ -41,7 +41,7 @@ namespace CoganSoftware::HLWA::Accents {
 			if (!SWCA) return CS_HLWA_R_INVALID;
 			ACCENTPOLICY policy{
 				.accentState = accent->enable ? (uint32_t)accent->accentState : 0,
-				.accentFlags = 2,
+				.accentFlags = 1,
 				.gradientColor = accent->gradientColor,
 				.animationId = 0
 			};

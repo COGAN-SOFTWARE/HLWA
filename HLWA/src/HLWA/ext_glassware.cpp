@@ -224,7 +224,7 @@ namespace CoganSoftware::HLWA::Glassware {
 
 				InvalidateRect(hwnd, NULL, TRUE);
 			} else if (p_wParam == SIZE_RESTORED && window->m_flags & CS_HLWA_GW_F_WASMAXIMIZE && window->m_config.context.flags & CS_HLWA_GW_CSF_DISABLETITLEBAR) {
-				window->m_flags |= ~CS_HLWA_GW_F_WASMAXIMIZE;
+				window->m_flags &= ~CS_HLWA_GW_F_WASMAXIMIZE;
 				
 				SetWindowLong(hwnd, GWL_STYLE, GetWindowLongA(hwnd, GWL_STYLE) | WS_OVERLAPPEDWINDOW);
 
@@ -747,7 +747,7 @@ namespace CoganSoftware::HLWA::Glassware {
 		SetWindowPos((HWND)WINDOWS.m_handle, NULL, 0, 0, m_config.sizeX, m_config.sizeY, SWP_FRAMECHANGED | SWP_NOMOVE);
 
 		m_dpi = GetDpiForWindow((HWND)WINDOWS.m_handle);
-		m_flags |= ~CS_HLWA_GW_F_RESIZEFLAG;
+		ResetResizeFlag();
 #endif
 
 		SetMode(m_config.mode);
@@ -1294,7 +1294,7 @@ namespace CoganSoftware::HLWA::Glassware {
 		m_flags |= CS_HLWA_GW_F_RESIZEFLAG;
 	}
 	void Glassware::ResetResizeFlag() {
-		m_flags |= ~CS_HLWA_GW_F_RESIZEFLAG;
+		m_flags &= ~CS_HLWA_GW_F_RESIZEFLAG;
 	}
 	bool Glassware::GetResizeFlag() const {
 		return m_flags & CS_HLWA_GW_F_RESIZEFLAG;

@@ -1,6 +1,12 @@
 #include "types.hpp"
 
+#include "ext_accents.hpp"
+#include "ext_displaymesh.hpp"
+#include "ext_glassware.hpp"
 #include "ext_jumplist.hpp"
+#include "ext_logprocessor.hpp"
 #include "ext_registry.hpp"
 #include "ext_taskbar.hpp"
+#include "ext_toast.hpp"
+#include "ext_tray.hpp"
 #include "ext_utils.hpp"

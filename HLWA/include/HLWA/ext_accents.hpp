@@ -20,7 +20,7 @@ namespace CoganSoftware::HLWA::Accents {
 		CS_HLWA_A_AT type = 0;
 		bool enable = false;
 	};
-	enum struct AccentState {
+	enum struct AcrylicAccentState {
 		GRADIENT = 1,
 		TRANSPARENT_GRADIENT = 2,
 		AEROBLURBEHIND = 3,
@@ -31,8 +31,8 @@ namespace CoganSoftware::HLWA::Accents {
 		AcrylicAccent() {
 			type = CS_HLWA_A_AT_ACRYLIC;
 		}
-		AccentState accentState;
-		uint32_t gradientColor = 0x99000000; // Uses ARGB.
+		AcrylicAccentState accentState;
+		uint32_t gradientColor = 0x00000000; // Uses ARGB.
 	};
 	enum struct RoundState {
 		DEFAULT = 0,
