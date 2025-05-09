@@ -7,7 +7,7 @@
 ---
 ### How To Compile
 
-> **Note**: If you want to user the compiled static library, output build location is <root>/bin/HLWA/<buildcfg>-<system>-<architecture>/HLWA.lib.<br>
+> **Note**: If you want to user the compiled static library, output build location is %root%/bin/HLWA/%buildcfg%-%system%-%architecture%/HLWA.lib.<br>
 > **Note**: Be aware, by default, `CS_HLWA_E_ALL` is defined in both `premake5.lua` & `CMakeLists.txt` for project `HLWA` (however each extension or all extensions can be enabled when including the header file).
 
 ##### Visual Studio (+ premake5)
