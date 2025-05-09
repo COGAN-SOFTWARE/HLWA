@@ -4,9 +4,7 @@
 
 #include "types.hpp"
 
-#include <string>
 #include <variant>
-#include <vector>
 
 #if defined(_WIN32)
 typedef struct HKEY__ *HKEY; // Forward declaration.
@@ -30,9 +28,9 @@ namespace CoganSoftware::HLWA::Registry {
 		const CS_HLWA_STRING& GetName() const;
 		void SetName(const CS_HLWA_STRING& p_name);
 
-		EntryType GetType();
+		EntryType GetType() const;
 		CS_HLWA_R SetType(EntryType p_type); // Clears data.
-		CS_HLWA_R GetData(uint32_t* p_outDword, std::vector<uint8_t>* p_outBinary, CS_HLWA_STRING* p_outString);
+		CS_HLWA_R GetData(uint32_t* p_outDword, std::vector<uint8_t>* p_outBinary, CS_HLWA_STRING* p_outString) const;
 		CS_HLWA_R SetData(uint32_t* p_inDword, std::vector<uint8_t>* p_inBinary, CS_HLWA_STRING* p_inString);
 	private:
 		CS_HLWA_STRING m_name;
@@ -73,10 +71,12 @@ namespace CoganSoftware::HLWA::Registry {
 		void Clear();
 
 		size_t AddChildKey(const CS_HLWA_STRING& p_name);
-		size_t AddEntry(Entry& p_entry);
+		size_t AddEntry(const Entry& p_entry);
 		CS_HLWA_R RemoveChildKey(const CS_HLWA_STRING& p_keyName);
 		CS_HLWA_R RemoveEntry(const CS_HLWA_STRING& p_entryName);
 		
+		std::vector<Key>& GetChildKeys();
+		std::vector<Entry>& GetEntries();
 		const std::vector<Key>& GetChildKeys() const;
 		const std::vector<Entry>& GetEntries() const;
 

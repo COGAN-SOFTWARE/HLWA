@@ -2,6 +2,9 @@
 
 #if defined(CS_HLWA_E_REGISTRY) || defined(CS_HLWA_E_ALL)
 #if defined(_WIN32)
+#if defined(CS_HLWA_USEUTF8STRINGS)
+#undef UNICODE
+#endif
 #include <Windows.h>
 
 namespace CoganSoftware::HLWA::Registry {
@@ -28,7 +31,7 @@ namespace CoganSoftware::HLWA::Registry {
 		m_dirty = true;
 	}
 	
-	EntryType Entry::GetType() { return m_type; };
+	EntryType Entry::GetType() const { return m_type; };
 	CS_HLWA_R Entry::SetType(EntryType p_type) {
 		m_type = p_type;
 		static uint32_t defDword = 0;
@@ -38,7 +41,7 @@ namespace CoganSoftware::HLWA::Registry {
 		m_dirty = true;
 		return r;
 	};
-	CS_HLWA_R Entry::GetData(uint32_t* p_outDword, std::vector<uint8_t>* p_outBinary, CS_HLWA_STRING* p_outString) {
+	CS_HLWA_R Entry::GetData(uint32_t* p_outDword, std::vector<uint8_t>* p_outBinary, CS_HLWA_STRING* p_outString) const {
 		switch (m_type) {
 		case(EntryType::DWORD):
 			if (p_outDword == nullptr) return CS_HLWA_R_INVALIDARGS;
@@ -154,6 +157,9 @@ namespace CoganSoftware::HLWA::Registry {
 		if (m_key == nullptr) return CS_HLWA_R_NOTFOUND;
 		if (m_key->m_key == nullptr) return CS_HLWA_R_NOTFOUND;
 
+		m_childKeys.clear();
+		m_entries.clear();
+
 #if defined(CS_HLWA_USEUTF8STRINGS)
 		char subKeyName[256];
 #else
@@ -163,11 +169,7 @@ namespace CoganSoftware::HLWA::Registry {
 		DWORD i = 0;
 		while (true) {
 			subKeyLength = sizeof(subKeyName);
-#if defined(CS_HLWA_USEUTF8STRINGS)
-			HRESULT r = RegEnumKeyExA(m_key->m_key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
-#else
-			HRESULT r = RegEnumKeyExW(m_key->m_key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
-#endif
+			HRESULT r = RegEnumKeyEx(m_key->m_key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
 			if (r == ERROR_NO_MORE_ITEMS) break;
 			if (r != ERROR_SUCCESS) {
 				return CS_HLWA_R_INVALID;
@@ -188,11 +190,7 @@ namespace CoganSoftware::HLWA::Registry {
 		while (true) {
 			valueLength = sizeof(valueName);
 			dataLength = sizeof(data);
-#if defined(CS_HLWA_USEUTF8STRINGS)
-			HRESULT r = RegEnumValueA(m_key->m_key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
-#else
-			HRESULT r = RegEnumValueW(m_key->m_key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
-#endif
+			HRESULT r = RegEnumValue(m_key->m_key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
 			if (r == ERROR_NO_MORE_ITEMS) break;
 			if (r != ERROR_SUCCESS) {
 				return CS_HLWA_R_INVALID;
@@ -246,11 +244,7 @@ namespace CoganSoftware::HLWA::Registry {
 			DWORD i = 0;
 			while (true) {
 				subKeyLength = sizeof(subKeyName);
-#if defined(CS_HLWA_USEUTF8STRINGS)
-				HRESULT r = RegEnumKeyExA(m_key->m_key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
-#else
-				HRESULT r = RegEnumKeyExW(m_key->m_key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
-#endif
+				HRESULT r = RegEnumKeyEx(m_key->m_key, i++, subKeyName, &subKeyLength, nullptr, nullptr, nullptr, nullptr);
 				if (r == ERROR_NO_MORE_ITEMS) break;
 				if (r != ERROR_SUCCESS) {
 					return CS_HLWA_R_INVALID;
@@ -271,11 +265,7 @@ namespace CoganSoftware::HLWA::Registry {
 			while (true) {
 				valueLength = sizeof(valueName);
 				dataLength = sizeof(data);
-#if defined(CS_HLWA_USEUTF8STRINGS)
-				HRESULT r = RegEnumValueA(m_key->m_key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
-#else
-				HRESULT r = RegEnumValueW(m_key->m_key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
-#endif
+				HRESULT r = RegEnumValue(m_key->m_key, i++, valueName, &valueLength, NULL, &type, data, &dataLength);
 				if (r == ERROR_NO_MORE_ITEMS) break;
 				if (r != ERROR_SUCCESS) {
 					return CS_HLWA_R_INVALID;
@@ -298,24 +288,16 @@ namespace CoganSoftware::HLWA::Registry {
 			HRESULT r;
 			switch (type) {
 			case(EntryType::DWORD):
-#if defined(CS_HLWA_USEUTF8STRINGS)
-				r = RegSetValueExA(m_key->m_key, entry.GetName().c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(dword), sizeof(uint32_t));
-#else
-				r = RegSetValueExW(m_key->m_key, entry.GetName().c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(dword), sizeof(uint32_t));
-#endif
+				r = RegSetValueEx(m_key->m_key, entry.GetName().c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(dword), sizeof(uint32_t));
 				break;
 			case(EntryType::BINARY):
-#if defined(CS_HLWA_USEUTF8STRINGS)
-				r = RegSetValueExA(m_key->vkey, entry.GetName().c_str(), 0, REG_SZ, bin.data(), static_cast<DWORD>(bin.size()));
-#else
-				r = RegSetValueExW(m_key->m_key, entry.GetName().c_str(), 0, REG_SZ, bin.data(), static_cast<DWORD>(bin.size()));
-#endif
+				r = RegSetValueEx(m_key->m_key, entry.GetName().c_str(), 0, REG_SZ, bin.data(), static_cast<DWORD>(bin.size()));
 				break;
 			case(EntryType::STRING):
 #if defined(CS_HLWA_USEUTF8STRINGS)
-				r = RegSetValueExA(m_key->m_key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(char)));
+				r = RegSetValueEx(m_key->m_key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(char)));
 #else
-				r = RegSetValueExW(m_key->m_key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(wchar_t)));
+				r = RegSetValueEx(m_key->m_key, entry.GetName().c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(str.c_str()), static_cast<DWORD>((str.size() + 1) * sizeof(wchar_t)));
 #endif
 				break;
 			}
@@ -335,20 +317,12 @@ namespace CoganSoftware::HLWA::Registry {
 		}
 
 		for (auto& diff : diffEntries) {
-#if defined(CS_HLWA_USEUTF8STRINGS)
-			HRESULT r = RegDeleteValueA(m_key->m_key, diff.c_str());
-#else
-			HRESULT r = RegDeleteValueW(m_key->m_key, diff.c_str());
-#endif
+			HRESULT r = RegDeleteValue(m_key->m_key, diff.c_str());
 			if (r != ERROR_SUCCESS) return CS_HLWA_R_INVALID;
 		}
 
 		for (auto& diff : diffChildKeys) {
-#if defined(CS_HLWA_USEUTF8STRINGS)
-			HRESULT r = RegDeleteTreeA(m_key->m_key, diff.c_str());
-#else
-			HRESULT r = RegDeleteTreeW(m_key->m_key, diff.c_str());
-#endif
+			HRESULT r = RegDeleteTree(m_key->m_key, diff.c_str());
 			if (r != ERROR_SUCCESS) return CS_HLWA_R_INVALID;
 		}
 
@@ -367,11 +341,7 @@ namespace CoganSoftware::HLWA::Registry {
 		if (m_parent == nullptr) return CS_HLWA_R_NOTFOUND;
 		if (m_parent->m_key == nullptr) return CS_HLWA_R_NOTFOUND;
 
-#if defined(CS_HLWA_USEUTF8STRINGS)
-		HRESULT r = RegDeleteTreeA(m_parent->m_key, path.c_str());
-#else
-		HRESULT r = RegDeleteTreeW(m_parent->m_key, m_path.c_str());
-#endif
+		HRESULT r = RegDeleteTree(m_parent->m_key, m_path.c_str());
 		if (r != ERROR_SUCCESS) return CS_HLWA_R_INVALID;
 		return CS_HLWA_R_SUCCESS;
 	}
@@ -403,15 +373,23 @@ namespace CoganSoftware::HLWA::Registry {
 		m_dirty = true;
 		return m_childKeys.size() - 1;
 	}
-	size_t Key::AddEntry(Entry& p_entry) {
-		p_entry.ForceDirty();
+	size_t Key::AddEntry(const Entry& p_entry) {
 		for (size_t i = 0; i < m_childKeys.size(); i++) {
 			if (m_entries[i].GetName() == p_entry.GetName()) {
 				m_entries[i] = p_entry;
+				if (m_entries[i].GetType() != p_entry.GetType()) {
+					m_entries[i].SetType(p_entry.GetType());
+					uint32_t dword;
+					std::vector<uint8_t> bin;
+					CS_HLWA_STRING str;
+					p_entry.GetData(&dword, &bin, &str);
+					m_entries[i].SetData(&dword, &bin, &str);
+				}
 				return i;
 			}
 		}
 		m_entries.push_back(p_entry);
+		m_entries.back().ForceDirty();
 		m_dirty = true;
 		return m_entries.size() - 1;
 	}
@@ -435,7 +413,13 @@ namespace CoganSoftware::HLWA::Registry {
 		}
 		return CS_HLWA_R_NOTFOUND;
 	}
-		
+	
+	std::vector<Key>& Key::GetChildKeys() {
+		return m_childKeys;
+	}
+	std::vector<Entry>& Key::GetEntries() {
+		return m_entries;
+	}
 	const std::vector<Key>& Key::GetChildKeys() const {
 		return m_childKeys;
 	}
@@ -468,11 +452,7 @@ namespace CoganSoftware::HLWA::Registry {
 		m_key->m_users++;
 
 		DWORD disposition;
-#if defined(CS_HLWA_USEUTF8STRINGS)
-		HRESULT r = RegCreateKeyExA(m_parent->m_key, m_path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &m_key->m_key, &disposition);
-#else
-		HRESULT r = RegCreateKeyExW(m_parent->m_key, m_path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &m_key->m_key, &disposition);
-#endif
+		HRESULT r = RegCreateKeyEx(m_parent->m_key, m_path.c_str(), 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, &m_key->m_key, &disposition);
 		if (disposition == REG_OPENED_EXISTING_KEY) {
 			m_creationResult = CS_HLWA_R_ALREADYEXISTS | CS_HLWA_R_SUCCESS;
 			return;

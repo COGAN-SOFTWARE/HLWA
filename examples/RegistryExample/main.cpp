@@ -6,11 +6,11 @@ using namespace CoganSoftware::HLWA;
 int main() {
 	if (!(Utils::IsAdmin() & CS_HLWA_R_SUCCESS)) return 1;
 
-	Registry::Key myKey = Registry::Key{ L"MyExample" };		// This creates/opens to an existing key. The validation can be checked by calling `GetCreationResult()`.
+	Registry::Key myKey = Registry::Key{ CS_HLWA_STRVAL("MyExample") };		// This creates/opens to an existing key. The validation can be checked by calling `GetCreationResult()`.
 
 	myKey.Load();											// It is recommended to call `Load()` first before handling the key; this loads all child keys and entries. If you want the child keys to also be fully loaded and so on and so forth, you can call `DeepLoad()`.
 
-	CS_HLWA_STRING str = L"Example Default Entry!!!";
+	CS_HLWA_STRING str = CS_HLWA_STRVAL("Example Default Entry!!!");
 	Registry::Entry defaultEntry = Registry::Entry{
 		CS_HLWA_DEFAULTENTRY,								// This is a `std::wstring` input, it's the name of the entry; here we provide the default entry name string which exposed is simply just L"". We write this as a macro for future proofing constants or if we support additional platforms that have a similar registry-like system.
 		Registry::EntryType::STRING,

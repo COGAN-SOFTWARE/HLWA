@@ -5,7 +5,7 @@
 #include <Windows.h>
 
 namespace CoganSoftware::HLWA::Jumplist {
-	// TODO
+	// TODO: ext_jumplist.cpp
 }
 #endif
 #endif

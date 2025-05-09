@@ -6,7 +6,7 @@
 
 #if defined(_WIN32)
 namespace CoganSoftware::HLWA::Jumplist {
-	// TODO
+	// TODO: ext_jumplist.hpp
 }
 #endif
 #endif

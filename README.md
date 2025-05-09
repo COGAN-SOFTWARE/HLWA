@@ -43,6 +43,9 @@
 > **Q**: When will standalone CMake clang/gcc work?<br>
 > **A**: I'm not focusing on those issues right now, however if anyone has a solution to the cli errors when compiling the CMake project using standalone compilers, please reach out to us.
 
+> **Q**: The code for user input looks like GLFW, is this true?<br>
+> **A**: All credit for how input is interpreted goes to GLFW, while I did do all my touches and features as well as how some things get passed to the user, ultimately it's all derived from GLFW; otherwise everything else (except for repainting in the `WindowProc`) is solely self-developed.
+
 ---
 ### How To Use
 
@@ -50,10 +53,18 @@
 
 > The API is split up between extensions, all of which can contribute to one another but built in isolated sections of code. It's recommended to only include `core.hpp` and specify the extension as macros of which you want to use. Here are a list of extensions you can enable:
 
+> **Note**: Documentation for each extension coming soon...
+
 - `CS_HLWA_E_ALL`
-- `CS_HLWA_E_JUMPLIST` **WIP; Planned (experimenting)**
+- `CS_HLWA_E_ACCENTS`
+- `CS_HLWA_E_DISPLAYMESH`
+- `CS_HLWA_E_GLASSWARE`
+- `CS_HLWA_E_JUMPLIST`        **WIP; Planned (experimenting).**
+- `CS_HLWA_E_LOGPROCESSOR`
 - `CS_HLWA_E_REGISTRY`
-- `CS_HLWA_E_TASKBAR` **WIP; Internal implementation**
+- `CS_HLWA_E_TASKBAR`
+- `CS_HLWA_E_TOAST`           **WIP; Planned (experimenting).**
+- `CS_HLWA_E_TRAY`            **WIP; Planned (experimenting).**
 - `CS_HLWA_E_UTILS`
 
 ##### Examples
