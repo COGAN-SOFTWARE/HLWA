@@ -117,10 +117,6 @@ namespace CoganSoftware::HLWA::Glassware {
 			if (p_wParam == true && p_lParam != NULL && window->m_config.context.flags & CS_HLWA_GW_CSF_DISABLETITLEBAR) {
 				NCCALCSIZE_PARAMS* pParams = reinterpret_cast<NCCALCSIZE_PARAMS*>(p_lParam);
 				pParams->rgrc[0] = pParams->rgrc[1];
-				//pParams->rgrc[0].top += 0;
-				//pParams->rgrc[0].right -= 0;
-				//pParams->rgrc[0].bottom -= 0;
-				//pParams->rgrc[0].left += 0;
 				return 0; // Disable titlebar.
 			} else if (p_wParam == false && window->SupportsComposition() && window->m_config.context.flags & CS_HLWA_GW_CSF_TRANSPARENT) {
 				return 0; // Enable transparency (dx12 only).
@@ -168,7 +164,8 @@ namespace CoganSoftware::HLWA::Glassware {
 		}
 		case WM_NCACTIVATE:
 		case WM_NCPAINT: {
-			if (window->m_config.context.flags & CS_HLWA_GW_CSF_DISABLETITLEBAR) return true; // prevent title bar from being drawn after restoring
+			// So apparently if this is uncommented... re-enabling the titlebar looks like gay as fuck win7 aero.
+			//if (window->m_config.context.flags & CS_HLWA_GW_CSF_DISABLETITLEBAR) return true; // prevent title bar from being drawn after restoring
 			break;
 		}
 		case WM_ERASEBKGND: {
@@ -226,7 +223,7 @@ namespace CoganSoftware::HLWA::Glassware {
 			} else if (p_wParam == SIZE_RESTORED && window->m_flags & CS_HLWA_GW_F_WASMAXIMIZE && window->m_config.context.flags & CS_HLWA_GW_CSF_DISABLETITLEBAR) {
 				window->m_flags &= ~CS_HLWA_GW_F_WASMAXIMIZE;
 				
-				SetWindowLong(hwnd, GWL_STYLE, GetWindowLongA(hwnd, GWL_STYLE) | WS_OVERLAPPEDWINDOW);
+				SetWindowLong(hwnd, GWL_STYLE, GetWindowLongA(hwnd, GWL_STYLE) | WS_OVERLAPPEDWINDOW); // TODO: I think this needs to be using the cached variables? Fuck me idk...
 
 				RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 			}
@@ -237,20 +234,24 @@ namespace CoganSoftware::HLWA::Glassware {
 				DwmExtendFrameIntoClientArea(hwnd, &margins);
 			}
 			if (GetWindowRect(hwnd, &rect)) {
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 				LogProcessor::GlasswareResizedLog msg{};
 				msg.glassware = window;
 				msg.prevX = window->m_sizeX;
 				msg.prevY = window->m_sizeY;
 				msg.newX = rect.right - rect.left;
 				msg.newY = rect.bottom - rect.top;
-				window->m_sizeX = msg.newX;
-				window->m_sizeY = msg.newY;
+#endif
+				window->m_sizeX = rect.right - rect.left;
+				window->m_sizeY = rect.bottom - rect.top;
 				RECT clientRect;
 				if (GetClientRect(hwnd, &clientRect)) {
 					window->m_cliX = clientRect.right - clientRect.left;
 					window->m_cliY = clientRect.bottom - clientRect.top;
 				}
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 				LogProcessor::CallLogProcessor(&msg);
+#endif
 			}
 			//break;
 			return 0;
@@ -258,15 +259,19 @@ namespace CoganSoftware::HLWA::Glassware {
 		case WM_MOVE: {
 			RECT rect;
 			if (GetWindowRect(hwnd, &rect)) {
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 				LogProcessor::GlasswareMovedLog msg{};
 				msg.glassware = window;
 				msg.prevX = window->m_posX;
 				msg.prevY = window->m_posY;
 				msg.newX = rect.left;
 				msg.newY = rect.top;
-				window->m_posX = msg.newX; // Before these were the previous coords? Should be fixed now...
-				window->m_posY = msg.newY;
+#endif
+				window->m_posX = rect.left; // Before these were the previous coords? Should be fixed now...
+				window->m_posY = rect.top;
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 				LogProcessor::CallLogProcessor(&msg);
+#endif
 			}
 			//break;
 			return 0;
@@ -275,10 +280,12 @@ namespace CoganSoftware::HLWA::Glassware {
 			if (window) {
 				if (!window->GetFocusedFlag()) {
 					window->SetFocusedFlag(true);
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 					LogProcessor::GlasswareFocusedLog msg{};
 					msg.glassware = window;
 					msg.focused = true;
 					LogProcessor::CallLogProcessor(&msg);
+#endif
 				}
 			}
 			break;
@@ -287,10 +294,12 @@ namespace CoganSoftware::HLWA::Glassware {
 			if (window) {
 				if (window->GetFocusedFlag()) {
 					window->SetFocusedFlag(false);
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 					LogProcessor::GlasswareFocusedLog msg{};
 					msg.glassware = window;
 					msg.focused = false;
 					LogProcessor::CallLogProcessor(&msg);
+#endif
 				}
 			}
 			break;
@@ -309,10 +318,12 @@ namespace CoganSoftware::HLWA::Glassware {
 
 					window->SetHoveredFlag(true);
 					
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 					LogProcessor::GlasswareHoveredLog msg{};
 					msg.glassware = window;
 					msg.hovered = true;
 					LogProcessor::CallLogProcessor(&msg);
+#endif
 
 					if (window->m_config.context.flags & CS_HLWA_GW_CSF_CONTEXTMENU) {
 						g_destroyParentViaDestructor = false;
@@ -337,10 +348,12 @@ namespace CoganSoftware::HLWA::Glassware {
 				if (window->GetHoveredFlag()) {
 					window->SetHoveredFlag(false);
 					
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 					LogProcessor::GlasswareHoveredLog msg{};
 					msg.glassware = window;
 					msg.hovered = false;
-				LogProcessor::CallLogProcessor(&msg);
+					LogProcessor::CallLogProcessor(&msg);
+#endif
 
 					if (window->m_config.context.flags & CS_HLWA_GW_CSF_CONTEXTMENU) {
 						g_destroyParentViaDestructor = false;
@@ -531,6 +544,7 @@ namespace CoganSoftware::HLWA::Glassware {
 			const char** const_paths = (const char**)malloc(count * sizeof(const char*));
 			for (uint32_t i = 0; i < count; i++) const_paths[i] = paths[i];
 			
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 			LogProcessor::GlasswareFileDropLog msg{};
 			msg.glassware = window;
 			msg.posX = window->INPUTSTORAGE.m_mouseX;
@@ -538,6 +552,7 @@ namespace CoganSoftware::HLWA::Glassware {
 			msg.paths = const_paths;
 			msg.pathCount = count;
 			LogProcessor::CallLogProcessor(&msg);
+#endif
 
 			for (i = 0; i < count; i++) free(paths[i]);
 			free(paths);
@@ -617,9 +632,11 @@ namespace CoganSoftware::HLWA::Glassware {
 		IC.m_mouseDelCall(this, p_dx, p_dy, p_mods);
 	}
 
+#if defined(_WIN32)
 	Glassware::Glassware(void* p_hwnd) {
 		//
 	}
+#endif
 	Glassware::Glassware(const GlasswareCreateInfoConfig& p_config) : m_config{ p_config } {
 		g_windows.push_back(this);
 		if (m_config.parent != nullptr) m_config.parent->m_children.push_back(this);
@@ -697,10 +714,10 @@ namespace CoganSoftware::HLWA::Glassware {
 		WINDOWS.g_windowClasses[m_config.className]++;
 		
 		WINDOWS.m_handle = CreateWindowEx(
-			0,
+			0, //WS_EX_NOREDIRECTIONBITMAP
 			m_config.className.c_str(),
 			m_config.title.c_str(),
-			WS_OVERLAPPEDWINDOW,
+			WS_OVERLAPPEDWINDOW & ~WS_OVERLAPPED,
 			posX,
 			posY,
 			m_config.sizeX,
@@ -710,10 +727,8 @@ namespace CoganSoftware::HLWA::Glassware {
 			GetModuleHandle(nullptr),
 			this
 		);
-		
 		SetProp((HWND)WINDOWS.m_handle, CS_HLWA_STRVAL("GLASSWARE"), this);
 
-		
 		if (m_config.context.flags & CS_HLWA_GW_CSF_CONTEXTMENU) {
 			Hide();
 			// TODO: Maybe just move this into the create window function?
@@ -721,9 +736,13 @@ namespace CoganSoftware::HLWA::Glassware {
 		}
 		Show();
 
+		if (m_config.context.flags & CS_HLWA_GW_CSF_ALWAYSONTOP) {
+			SetWindowPos((HWND)WINDOWS.m_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		}
 		
-		// TODO: Maybe put this in the create function? I'll have to test accent code.
-		SetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE, GetWindowLongA((HWND)WINDOWS.m_handle, GWL_EXSTYLE) | WS_EX_LAYERED);
+		// Apparently this cannot be in the CreateWindowEx call because it'll fuck up the titlebar... why?
+		SetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE, GetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE) | WS_EX_LAYERED);// | WS_EX_NOREDIRECTIONBITMAP);
+		SetWindowLong((HWND)WINDOWS.m_handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 		
 		WINDOWS.m_windowedStyle = GetWindowLong((HWND)WINDOWS.m_handle, GWL_STYLE);
 		WINDOWS.m_fullscreenStyle = GetWindowLong((HWND)WINDOWS.m_handle, GWL_STYLE) | WS_POPUP;
@@ -731,15 +750,22 @@ namespace CoganSoftware::HLWA::Glassware {
 		WINDOWS.m_windowedExStyle = GetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE);
 		WINDOWS.m_fullscreenExStyle = GetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE) | WS_EX_APPWINDOW;
 		WINDOWS.m_fullscreenBorderlessExStyle = GetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE);
-
+		
 		if (SupportsComposition() && m_config.context.flags & CS_HLWA_GW_CSF_TRANSPARENT) {
 			HRGN region = CreateRectRgn(0, 0, -1, -1);
 			DWM_BLURBEHIND bb = { 0 };								// No this does not enable blur behind; this is for transparent; acrylic is located in the accents.
-			bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+			bb.dwFlags = DWM_BB_ENABLE;// | DWM_BB_BLURREGION;
 			bb.hRgnBlur = region;
 			bb.fEnable = true;
 			DwmEnableBlurBehindWindow((HWND)WINDOWS.m_handle, &bb);	// Enable transparency (vk only).
 			DeleteObject(region);
+		} else if (!SupportsComposition()) {
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
+			LogProcessor::OutputLog msg{};
+			msg.outputType = LogProcessor::OutputType::ERR;
+			msg.value = CS_HLWA_STRVAL("System does not support composition.");
+			LogProcessor::CallLogProcessor(&msg);
+#endif
 		}
 		
 		auto original_proc = (WNDPROC)GetWindowLongPtr((HWND)WINDOWS.m_handle, GWLP_WNDPROC);
@@ -827,7 +853,7 @@ namespace CoganSoftware::HLWA::Glassware {
 		for (int i = g_windows.size() - 1; i >= 0; i--) {
 			auto* win = g_windows[i];
 			if (win != nullptr) {
-				win->OnUpdate();
+				win->OnPreUpdate();
 			}
 		}
 	}
@@ -963,10 +989,12 @@ namespace CoganSoftware::HLWA::Glassware {
 			
 			if (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
 				Restore();
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 				LogProcessor::OutputLog msg{};
 				msg.outputType = LogProcessor::OutputType::ERR;
 				msg.value = CS_HLWA_STRVAL("Error occurred during attempt to change display settings; restoring.");
 				LogProcessor::CallLogProcessor(&msg);
+#endif
 				return false;
 			}
 			
@@ -991,10 +1019,12 @@ namespace CoganSoftware::HLWA::Glassware {
 			
 			if (!GetMonitorInfo(monitorHandle, &monitorInfo)) {
 				Restore();
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
 				LogProcessor::OutputLog msg{};
 				msg.outputType = LogProcessor::OutputType::ERR;
 				msg.value = CS_HLWA_STRVAL("Error occurred during attempt to change display settings; restoring.");
 				LogProcessor::CallLogProcessor(&msg);
+#endif
 				return false;
 			}
 			
@@ -1246,29 +1276,63 @@ namespace CoganSoftware::HLWA::Glassware {
 		return p_dpi / 96.0f;
 	}
 
-	void Glassware::SetContextFlag(CS_HLWA_GW_CSF p_flag, bool p_value) {
+	CS_HLWA_R Glassware::SetContextFlag(CS_HLWA_GW_CSF p_flag, bool p_value) {
 		CS_HLWA_GW_CSF tempFlags = m_config.context.flags;
 		tempFlags = (tempFlags & ~p_flag) | (-int(p_value) & p_flag);
 
-		if (tempFlags == m_config.context.flags) return;
+		if (tempFlags == m_config.context.flags) {
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
+			LogProcessor::OutputLog msg{};
+			msg.outputType = LogProcessor::OutputType::WARN;
+			msg.value = CS_HLWA_STRVAL("Attempting to set context flag with the same value; ignoring.");
+			LogProcessor::CallLogProcessor(&msg);
+#endif
+			return CS_HLWA_R_SUCCESS;
+		}
 		m_config.context.flags = tempFlags;
 
 		switch (p_flag) {
 		case(CS_HLWA_GW_CSF_DISABLETITLEBAR): {
+			m_config.context.flags = (m_config.context.flags & ~CS_HLWA_GW_CSF_DISABLETITLEBAR) | (-int(p_value) & CS_HLWA_GW_CSF_DISABLETITLEBAR);
+			SetWindowPos((HWND)WINDOWS.m_handle, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_DRAWFRAME);
 			break;
 		}
 		case(CS_HLWA_GW_CSF_TRANSPARENT): {
-			break;
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
+			LogProcessor::OutputLog msg{};
+			msg.outputType = LogProcessor::OutputType::ERR;
+			msg.value = CS_HLWA_STRVAL("Cannot change transparent context flag after creation; incompatible with DX12.");
+			LogProcessor::CallLogProcessor(&msg);
+#endif
+			return CS_HLWA_R_INVALID;
 		}
 		case(CS_HLWA_GW_CSF_CONTEXTMENU): {
+			m_config.context.flags = (m_config.context.flags & ~CS_HLWA_GW_CSF_CONTEXTMENU) | (-int(p_value) & CS_HLWA_GW_CSF_CONTEXTMENU);
+			if (p_value) UpdateWindowStyles(0, 0, WS_EX_TOOLWINDOW, 0);
+			else UpdateWindowStyles(0, 0, 0, WS_EX_TOOLWINDOW);
 			break;
 		}
 		case(CS_HLWA_GW_CSF_ENABLEFILEDROP): {
+			m_config.context.flags = (m_config.context.flags & ~CS_HLWA_GW_CSF_ENABLEFILEDROP) | (-int(p_value) & CS_HLWA_GW_CSF_ENABLEFILEDROP);
+			break;
+		}
+		case(CS_HLWA_GW_CSF_ALWAYSONTOP): {
+			m_config.context.flags = (m_config.context.flags & ~CS_HLWA_GW_CSF_ALWAYSONTOP) | (-int(p_value) & CS_HLWA_GW_CSF_ALWAYSONTOP);
+			if (p_value) SetWindowPos((HWND)WINDOWS.m_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+			else SetWindowPos((HWND)WINDOWS.m_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 			break;
 		}
 		default:
+#if defined(CS_HLWA_E_LOGPROCESSOR) || defined(CS_HLWA_E_ALL)
+			LogProcessor::OutputLog msg{};
+			msg.outputType = LogProcessor::OutputType::WARN;
+			msg.value = CS_HLWA_STRVAL("Invalid p_flag parameter in `SetContextFlag` call.");
+			LogProcessor::CallLogProcessor(&msg);
+#endif
 			break;
 		}
+
+		return CS_HLWA_R_SUCCESS;
 	}
 	bool Glassware::GetContextFlag(CS_HLWA_GW_CSF p_flag) const {
 		return m_config.context.flags & p_flag;
@@ -1312,5 +1376,32 @@ namespace CoganSoftware::HLWA::Glassware {
 	bool Glassware::GetFocusedFlag() const {
 		return m_flags & CS_HLWA_GW_F_FOCUSEDFLAG;
 	}
+
+#if defined(_WIN32)
+	void Glassware::UpdateWindowStyles(int p_add, int p_remove, int p_exadd, int p_exremove) {
+		WINDOWS.m_windowedStyle = (WINDOWS.m_windowedStyle & ~p_remove) | p_add; 
+		WINDOWS.m_fullscreenStyle = (WINDOWS.m_fullscreenStyle & ~p_remove) | p_add;
+		WINDOWS.m_fullscreenBorderlessStyle = (WINDOWS.m_fullscreenBorderlessStyle & ~p_remove) | p_add;
+		WINDOWS.m_windowedExStyle = (WINDOWS.m_windowedExStyle & ~p_exremove) | p_exadd;
+		WINDOWS.m_fullscreenExStyle = (WINDOWS.m_fullscreenExStyle & ~p_exremove) | p_exadd;
+		WINDOWS.m_fullscreenBorderlessExStyle = (WINDOWS.m_fullscreenBorderlessExStyle & ~p_exremove) | p_exadd;
+
+		auto mode = GetMode();
+		switch (mode) {
+		case(ModeState::WINDOWED):
+			SetWindowLong((HWND)WINDOWS.m_handle, GWL_STYLE, WINDOWS.m_windowedStyle);
+			SetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE, WINDOWS.m_windowedExStyle);
+			break;
+		case(ModeState::FULLSCREEN):
+			SetWindowLong((HWND)WINDOWS.m_handle, GWL_STYLE, WINDOWS.m_fullscreenStyle);
+			SetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE, WINDOWS.m_fullscreenExStyle);
+			break;
+		case(ModeState::FULLSCREEN_BORDERLESS):
+			SetWindowLong((HWND)WINDOWS.m_handle, GWL_STYLE, WINDOWS.m_fullscreenBorderlessStyle);
+			SetWindowLong((HWND)WINDOWS.m_handle, GWL_EXSTYLE, WINDOWS.m_fullscreenBorderlessExStyle);
+			break;
+		}
+	}
+#endif
 }
 #endif

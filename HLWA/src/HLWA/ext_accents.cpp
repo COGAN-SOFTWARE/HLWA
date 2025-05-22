@@ -41,8 +41,8 @@ namespace CoganSoftware::HLWA::Accents {
 			if (!SWCA) return CS_HLWA_R_INVALID;
 			ACCENTPOLICY policy{
 				.accentState = accent->enable ? (uint32_t)accent->accentState : 0,
-				.accentFlags = 1,
-				.gradientColor = accent->gradientColor,
+				.accentFlags = (uint32_t)(accent->enable ? 1 : 0),
+				.gradientColor = accent->enable ? accent->gradientColor : 0,
 				.animationId = 0
 			};
 			WINDOWCOMPOSITIONATTRIBDATA data{
@@ -66,9 +66,9 @@ namespace CoganSoftware::HLWA::Accents {
 		}
 		case(CS_HLWA_A_AT_DARKMODE): {
 			auto* accent = (DarkModeAccent*)p_accent;
-			if (accent->enable) {
-				DwmSetWindowAttribute((HWND)p_handle, DWMWA_USE_IMMERSIVE_DARK_MODE, &accent->enable, sizeof(accent->enable));
-			}
+			BOOL enabled = p_accent->enable;
+			DwmSetWindowAttribute((HWND)p_handle, DWMWA_USE_IMMERSIVE_DARK_MODE, &enabled, sizeof(enabled));
+			SetWindowPos((HWND)p_handle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 			break;
 		}
 		default:

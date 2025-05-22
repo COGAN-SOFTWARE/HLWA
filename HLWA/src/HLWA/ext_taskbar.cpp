@@ -34,6 +34,7 @@ namespace CoganSoftware::HLWA::Taskbar {
 	CS_HLWA_R Free() {
 		if (g_taskbar == nullptr) return CS_HLWA_R_NOTFOUND;
 		g_taskbar->Release();
+		g_taskbar = nullptr;
 		return CS_HLWA_R_SUCCESS;
 	}
 	void Alert(void* p_handle) {
@@ -94,7 +95,7 @@ namespace CoganSoftware::HLWA::Taskbar {
 	}
 #endif
 
-#if defined(CS_HLWA_E_TASKBAR) || defined(CS_HLWA_E_ALL)
+#if defined(CS_HLWA_E_GLASSWARE) || defined(CS_HLWA_E_ALL)
 	void Alert(Glassware::Glassware* p_glassware) {
 #if defined(_WIN32)
 		Alert(p_glassware->GetHandle());

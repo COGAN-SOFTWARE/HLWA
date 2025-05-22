@@ -9,7 +9,7 @@
 #define CS_HLWA_GW_CSF_TRANSPARENT					0x02
 #define CS_HLWA_GW_CSF_CONTEXTMENU					0x04
 #define CS_HLWA_GW_CSF_ENABLEFILEDROP				0x08
-// TODO: Add ALWAYSONTOP.
+#define CS_HLWA_GW_CSF_ALWAYSONTOP					0x10
 
 #define CS_HLWA_GW_F								int
 #define CS_HLWA_GW_F_CLOSE							0x01
@@ -39,129 +39,135 @@
 #define CS_HLWA_GW_M_MOD_MASK						(CS_HLWA_GW_M_SHIFT | CS_HLWA_GW_M_CONTROL | CS_HLWA_GW_M_ALT | CS_HLWA_GW_M_SUPER | CS_HLWA_GW_M_CAPSLOCK | CS_HLWA_GW_M_NUMLOCK)
 
 #define CS_HLWA_GW_K								int
-#define CS_HLWA_GW_K_SPACE							32
-#define CS_HLWA_GW_K_APOSTROPHE						39
-#define CS_HLWA_GW_K_COMMA							44
-#define CS_HLWA_GW_K_MINUS							45
-#define CS_HLWA_GW_K_PERIOD							46
-#define CS_HLWA_GW_K_SLASH							47
-#define CS_HLWA_GW_K_0								48
-#define CS_HLWA_GW_K_1								49
-#define CS_HLWA_GW_K_2								50
-#define CS_HLWA_GW_K_3								51
-#define CS_HLWA_GW_K_4								52
-#define CS_HLWA_GW_K_5								53
-#define CS_HLWA_GW_K_6								54
-#define CS_HLWA_GW_K_7								55
-#define CS_HLWA_GW_K_8								56
-#define CS_HLWA_GW_K_9								57
-#define CS_HLWA_GW_K_SEMICOLON						59
-#define CS_HLWA_GW_K_EQUAL							61
-#define CS_HLWA_GW_K_A								65
-#define CS_HLWA_GW_K_B								66
-#define CS_HLWA_GW_K_C								67
-#define CS_HLWA_GW_K_D								68
-#define CS_HLWA_GW_K_E								69
-#define CS_HLWA_GW_K_F								70
-#define CS_HLWA_GW_K_G								71
-#define CS_HLWA_GW_K_H								72
-#define CS_HLWA_GW_K_I								73
-#define CS_HLWA_GW_K_J								74
-#define CS_HLWA_GW_K_K								75
-#define CS_HLWA_GW_K_L								76
-#define CS_HLWA_GW_K_M								77
-#define CS_HLWA_GW_K_N								78
-#define CS_HLWA_GW_K_O								79
-#define CS_HLWA_GW_K_P								80
-#define CS_HLWA_GW_K_Q								81
-#define CS_HLWA_GW_K_R								82
-#define CS_HLWA_GW_K_S								83
-#define CS_HLWA_GW_K_T								84
-#define CS_HLWA_GW_K_U								85
-#define CS_HLWA_GW_K_V								86
-#define CS_HLWA_GW_K_W								87
-#define CS_HLWA_GW_K_X								88
-#define CS_HLWA_GW_K_Y								89
-#define CS_HLWA_GW_K_Z								90
-#define CS_HLWA_GW_K_LBRACKET						91
-#define CS_HLWA_GW_K_BACKSLASH						92
-#define CS_HLWA_GW_K_RBRACKET						93
-#define CS_HLWA_GW_K_BACKTICK						96
-#define CS_HLWA_GW_K_WORLD1							161
-#define CS_HLWA_GW_K_WORLD2							162
 
-#define CS_HLWA_GW_K_ESCAPE							256
-#define CS_HLWA_GW_K_ENTER							257
-#define CS_HLWA_GW_K_TAB							258
-#define CS_HLWA_GW_K_BACKSPACE						259
-#define CS_HLWA_GW_K_INSERT							260
-#define CS_HLWA_GW_K_DELETE							261
-#define CS_HLWA_GW_K_RIGHT							262
-#define CS_HLWA_GW_K_LEFT							263
-#define CS_HLWA_GW_K_DOWN							264
-#define CS_HLWA_GW_K_UP								265
-#define CS_HLWA_GW_K_PAGEUP							266
-#define CS_HLWA_GW_K_PAGEDOWN						267
-#define CS_HLWA_GW_K_HOME							268
-#define CS_HLWA_GW_K_END							269
-#define CS_HLWA_GW_K_CAPSLOCK						280
-#define CS_HLWA_GW_K_SCROLLLOCK						281
-#define CS_HLWA_GW_K_NUMLOCK						282
-#define CS_HLWA_GW_K_PRINTSCREEN					283
-#define CS_HLWA_GW_K_PAUSE							284
-#define CS_HLWA_GW_K_F1								290
-#define CS_HLWA_GW_K_F2								291
-#define CS_HLWA_GW_K_F3								292
-#define CS_HLWA_GW_K_F4								293
-#define CS_HLWA_GW_K_F5								294
-#define CS_HLWA_GW_K_F6								295
-#define CS_HLWA_GW_K_F7								296
-#define CS_HLWA_GW_K_F8								297
-#define CS_HLWA_GW_K_F9								298
-#define CS_HLWA_GW_K_F10							299
-#define CS_HLWA_GW_K_F11							300
-#define CS_HLWA_GW_K_F12							301
-#define CS_HLWA_GW_K_F13							302
-#define CS_HLWA_GW_K_F14							303
-#define CS_HLWA_GW_K_F15							304
-#define CS_HLWA_GW_K_F16							305
-#define CS_HLWA_GW_K_F17							306
-#define CS_HLWA_GW_K_F18							307
-#define CS_HLWA_GW_K_F19							308
-#define CS_HLWA_GW_K_F20							309
-#define CS_HLWA_GW_K_F21							310
-#define CS_HLWA_GW_K_F22							311
-#define CS_HLWA_GW_K_F23							312
-#define CS_HLWA_GW_K_F24							313
-#define CS_HLWA_GW_K_F25							314
-#define CS_HLWA_GW_K_KP_0							320
-#define CS_HLWA_GW_K_KP_1							321
-#define CS_HLWA_GW_K_KP_2							322
-#define CS_HLWA_GW_K_KP_3							323
-#define CS_HLWA_GW_K_KP_4							324
-#define CS_HLWA_GW_K_KP_5							325
-#define CS_HLWA_GW_K_KP_6							326
-#define CS_HLWA_GW_K_KP_7							327
-#define CS_HLWA_GW_K_KP_8							328
-#define CS_HLWA_GW_K_KP_9							329
-#define CS_HLWA_GW_K_KP_DECIMAL						330
-#define CS_HLWA_GW_K_KP_DIVIDE						331
-#define CS_HLWA_GW_K_KP_MULTIPLY					332
-#define CS_HLWA_GW_K_KP_SUBTRACT					333
-#define CS_HLWA_GW_K_KP_ADD							334
-#define CS_HLWA_GW_K_KP_ENTER						335
-#define CS_HLWA_GW_K_KP_EQUAL						336
-#define CS_HLWA_GW_K_LSHIFT							340
-#define CS_HLWA_GW_K_LCONTROL						341
-#define CS_HLWA_GW_K_LALT							342
-#define CS_HLWA_GW_K_LSUPER							343
-#define CS_HLWA_GW_K_RSHIFT							344
-#define CS_HLWA_GW_K_RCONTROL						345
-#define CS_HLWA_GW_K_RALT							346
-#define CS_HLWA_GW_K_RSUPER							347
-#define CS_HLWA_GW_K_MENU							348
+// Printable keys
+#define CS_HLWA_GW_K_SPACE							0x20 // VK_SPACE
+#define CS_HLWA_GW_K_APOSTROPHE						0xDE // VK_OEM_7
+#define CS_HLWA_GW_K_COMMA							0xBC // VK_OEM_COMMA
+#define CS_HLWA_GW_K_MINUS							0xBD // VK_OEM_MINUS
+#define CS_HLWA_GW_K_PERIOD							0xBE // VK_OEM_PERIOD
+#define CS_HLWA_GW_K_SLASH							0xBF // VK_OEM_2
+#define CS_HLWA_GW_K_0								0x30
+#define CS_HLWA_GW_K_1								0x31
+#define CS_HLWA_GW_K_2								0x32
+#define CS_HLWA_GW_K_3								0x33
+#define CS_HLWA_GW_K_4								0x34
+#define CS_HLWA_GW_K_5								0x35
+#define CS_HLWA_GW_K_6								0x36
+#define CS_HLWA_GW_K_7								0x37
+#define CS_HLWA_GW_K_8								0x38
+#define CS_HLWA_GW_K_9								0x39
+#define CS_HLWA_GW_K_SEMICOLON						0xBA // VK_OEM_1
+#define CS_HLWA_GW_K_EQUAL							0xBB // VK_OEM_PLUS
+#define CS_HLWA_GW_K_A								0x41
+#define CS_HLWA_GW_K_B								0x42
+#define CS_HLWA_GW_K_C								0x43
+#define CS_HLWA_GW_K_D								0x44
+#define CS_HLWA_GW_K_E								0x45
+#define CS_HLWA_GW_K_F								0x46
+#define CS_HLWA_GW_K_G								0x47
+#define CS_HLWA_GW_K_H								0x48
+#define CS_HLWA_GW_K_I								0x49
+#define CS_HLWA_GW_K_J								0x4A
+#define CS_HLWA_GW_K_K								0x4B
+#define CS_HLWA_GW_K_L								0x4C
+#define CS_HLWA_GW_K_M								0x4D
+#define CS_HLWA_GW_K_N								0x4E
+#define CS_HLWA_GW_K_O								0x4F
+#define CS_HLWA_GW_K_P								0x50
+#define CS_HLWA_GW_K_Q								0x51
+#define CS_HLWA_GW_K_R								0x52
+#define CS_HLWA_GW_K_S								0x53
+#define CS_HLWA_GW_K_T								0x54
+#define CS_HLWA_GW_K_U								0x55
+#define CS_HLWA_GW_K_V								0x56
+#define CS_HLWA_GW_K_W								0x57
+#define CS_HLWA_GW_K_X								0x58
+#define CS_HLWA_GW_K_Y								0x59
+#define CS_HLWA_GW_K_Z								0x5A
+#define CS_HLWA_GW_K_LBRACKET						0xDB // VK_OEM_4
+#define CS_HLWA_GW_K_BACKSLASH						0xDC // VK_OEM_5
+#define CS_HLWA_GW_K_RBRACKET						0xDD // VK_OEM_6
+#define CS_HLWA_GW_K_BACKTICK						0xC0 // VK_OEM_3
 
-#define CS_HLWA_GW_K_LAST							CS_HLWA_GW_K_MENU
+// Function keys
+#define CS_HLWA_GW_K_ESCAPE							0x1B // VK_ESCAPE
+#define CS_HLWA_GW_K_ENTER							0x0D // VK_RETURN
+#define CS_HLWA_GW_K_TAB							0x09 // VK_TAB
+#define CS_HLWA_GW_K_BACKSPACE						0x08 // VK_BACK
+#define CS_HLWA_GW_K_INSERT							0x2D // VK_INSERT
+#define CS_HLWA_GW_K_DELETE							0x2E // VK_DELETE
+#define CS_HLWA_GW_K_RIGHT							0x27 // VK_RIGHT
+#define CS_HLWA_GW_K_LEFT							0x25 // VK_LEFT
+#define CS_HLWA_GW_K_DOWN							0x28 // VK_DOWN
+#define CS_HLWA_GW_K_UP								0x26 // VK_UP
+#define CS_HLWA_GW_K_PAGEUP							0x21 // VK_PRIOR
+#define CS_HLWA_GW_K_PAGEDOWN						0x22 // VK_NEXT
+#define CS_HLWA_GW_K_HOME							0x24 // VK_HOME
+#define CS_HLWA_GW_K_END							0x23 // VK_END
+#define CS_HLWA_GW_K_CAPSLOCK						0x14 // VK_CAPITAL
+#define CS_HLWA_GW_K_SCROLLLOCK						0x91 // VK_SCROLL
+#define CS_HLWA_GW_K_NUMLOCK						0x90 // VK_NUMLOCK
+#define CS_HLWA_GW_K_PRINTSCREEN					0x2C // VK_SNAPSHOT
+#define CS_HLWA_GW_K_PAUSE							0x13 // VK_PAUSE
+
+// Function keys F1 - F24
+#define CS_HLWA_GW_K_F1								0x70 // VK_F1
+#define CS_HLWA_GW_K_F2								0x71 // VK_F2
+#define CS_HLWA_GW_K_F3								0x72 // VK_F3
+#define CS_HLWA_GW_K_F4								0x73 // VK_F4
+#define CS_HLWA_GW_K_F5								0x74 // VK_F5
+#define CS_HLWA_GW_K_F6								0x75 // VK_F6
+#define CS_HLWA_GW_K_F7								0x76 // VK_F7
+#define CS_HLWA_GW_K_F8								0x77 // VK_F8
+#define CS_HLWA_GW_K_F9								0x78 // VK_F9
+#define CS_HLWA_GW_K_F10							0x79 // VK_F10
+#define CS_HLWA_GW_K_F11							0x7A // VK_F11
+#define CS_HLWA_GW_K_F12							0x7B // VK_F12
+#define CS_HLWA_GW_K_F13							0x7C // VK_F13
+#define CS_HLWA_GW_K_F14							0x7D // VK_F14
+#define CS_HLWA_GW_K_F15							0x7E // VK_F15
+#define CS_HLWA_GW_K_F16							0x7F // VK_F16
+#define CS_HLWA_GW_K_F17							0x80 // VK_F17
+#define CS_HLWA_GW_K_F18							0x81 // VK_F18
+#define CS_HLWA_GW_K_F19							0x82 // VK_F19
+#define CS_HLWA_GW_K_F20							0x83 // VK_F20
+#define CS_HLWA_GW_K_F21							0x84 // VK_F21
+#define CS_HLWA_GW_K_F22							0x85 // VK_F22
+#define CS_HLWA_GW_K_F23							0x86 // VK_F23
+#define CS_HLWA_GW_K_F24							0x87 // VK_F24
+
+// Keypad keys
+#define CS_HLWA_GW_K_KP_0							0x60 // VK_NUMPAD0
+#define CS_HLWA_GW_K_KP_1							0x61 // VK_NUMPAD1
+#define CS_HLWA_GW_K_KP_2							0x62 // VK_NUMPAD2
+#define CS_HLWA_GW_K_KP_3							0x63 // VK_NUMPAD3
+#define CS_HLWA_GW_K_KP_4							0x64 // VK_NUMPAD4
+#define CS_HLWA_GW_K_KP_5							0x65 // VK_NUMPAD5
+#define CS_HLWA_GW_K_KP_6							0x66 // VK_NUMPAD6
+#define CS_HLWA_GW_K_KP_7							0x67 // VK_NUMPAD7
+#define CS_HLWA_GW_K_KP_8							0x68 // VK_NUMPAD8
+#define CS_HLWA_GW_K_KP_9							0x69 // VK_NUMPAD9
+#define CS_HLWA_GW_K_KP_DECIMAL						0x6E // VK_DECIMAL
+#define CS_HLWA_GW_K_KP_DIVIDE						0x6F // VK_DIVIDE
+#define CS_HLWA_GW_K_KP_MULTIPLY					0x6A // VK_MULTIPLY
+#define CS_HLWA_GW_K_KP_SUBTRACT					0x6D // VK_SUBTRACT
+#define CS_HLWA_GW_K_KP_ADD							0x6B // VK_ADD
+#define CS_HLWA_GW_K_KP_ENTER						0x0D // VK_RETURN — also used for numpad Enter
+#define CS_HLWA_GW_K_KP_EQUAL						0xBB // VK_OEM_PLUS — approximate (not standard on all layouts)
+
+// Modifier and system keys
+#define CS_HLWA_GW_K_LSHIFT							0xA0 // VK_LSHIFT
+#define CS_HLWA_GW_K_LCONTROL						0xA2 // VK_LCONTROL
+#define CS_HLWA_GW_K_LALT							0xA4 // VK_LMENU
+#define CS_HLWA_GW_K_LSUPER							0x5B // VK_LWIN
+#define CS_HLWA_GW_K_RSHIFT							0xA1 // VK_RSHIFT
+#define CS_HLWA_GW_K_RCONTROL						0xA3 // VK_RCONTROL
+#define CS_HLWA_GW_K_RALT							0xA5 // VK_RMENU
+#define CS_HLWA_GW_K_RSUPER							0x5C // VK_RWIN
+#define CS_HLWA_GW_K_MENU							0x5D // VK_APPS
+
+#define CS_HLWA_GW_K_LAST							0XFE // VK_OEM_CLEAR?
 
 #define CS_HLWA_GW_MBTN								int
 #define CS_HLWA_GW_MBTN_1							0
@@ -258,7 +264,7 @@ namespace CoganSoftware::HLWA::Glassware {
 	};
 	struct ContextState {
 		CS_HLWA_GW_CSF flags;
-		uint32_t positionSnapping = 0;
+		uint32_t positionSnapping = 0; // TODO: Position & size snapping.
 		uint32_t sizeSnapping = 0;
 	};
 	enum struct ModeState { WINDOWED, FULLSCREEN, FULLSCREEN_BORDERLESS };
@@ -343,7 +349,7 @@ namespace CoganSoftware::HLWA::Glassware {
 		static void PostUpdateWindows();
 
 		// Virtuals
-		virtual void OnUpdate() = 0;
+		virtual void OnPreUpdate() = 0;
 		virtual void OnPostUpdate() = 0;
 
 		// Hierarchical
@@ -418,7 +424,7 @@ namespace CoganSoftware::HLWA::Glassware {
 		static float GetDPIScaleFactor(uint32_t p_dpi);
 
 		// Context Handling
-		void SetContextFlag(CS_HLWA_GW_CSF p_flag, bool p_value); // TODO: Finish this...
+		CS_HLWA_R SetContextFlag(CS_HLWA_GW_CSF p_flag, bool p_value);
 		bool GetContextFlag(CS_HLWA_GW_CSF p_flag) const;
 		void SetPositionSnapping(uint32_t p_value);
 		uint32_t GetPositionSnapping() const;
@@ -456,6 +462,8 @@ namespace CoganSoftware::HLWA::Glassware {
 
 			static inline std::unordered_map<CS_HLWA_STRING, uint32_t> g_windowClasses{};
 		} WINDOWS;
+
+		void UpdateWindowStyles(int p_add, int p_remove, int p_exadd, int p_exremove);
 #endif
 		struct INPUTSTORAGET {
 			bool m_stickyKeys = false;

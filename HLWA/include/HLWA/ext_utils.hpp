@@ -21,7 +21,7 @@ namespace CoganSoftware::HLWA::Utils {
 	CS_HLWA_R ForceRelativePath(CS_HLWA_STRING p_path);
 #endif
 	
-#if defined(_WIN32) && (defined(CS_HLWA_E_UTILS) || defined(CS_HLWA_E_ALL))
+#if defined(_WIN32) && (defined(CS_HLWA_E_UTILS) || defined(CS_HLWA_E_JUMPLIST) || defined(CS_HLWA_E_REGISTRY) || defined(CS_HLWA_E_ALL))
 	struct AppIDRegistry {
 	public:
 		CS_HLWA_STRING appPath;

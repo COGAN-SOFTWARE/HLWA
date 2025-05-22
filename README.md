@@ -44,7 +44,7 @@
 > **A**: I'm not focusing on those issues right now, however if anyone has a solution to the cli errors when compiling the CMake project using standalone compilers, please reach out to us.
 
 > **Q**: The code for user input looks like GLFW, is this true?<br>
-> **A**: All credit for how input is interpreted goes to GLFW, while I did do all my touches and features as well as how some things get passed to the user, ultimately it's all derived from GLFW; otherwise everything else (except for repainting in the `WindowProc`) is solely self-developed.
+> **A**: All credit for how input is interpreted goes to GLFW, while I did do all my touches and features as well as how some things get passed to the user, ultimately it's all derived from GLFW; otherwise everything else (except for repainting in the `WindowProc`) is solely self-developed. One change that I have been trying to focus on is making it depend on scancodes rather then QWERTY layout specifications.
 
 ---
 ### How To Use

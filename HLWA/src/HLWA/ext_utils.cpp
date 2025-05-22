@@ -174,7 +174,9 @@ namespace CoganSoftware::HLWA::Utils {
 		return g_user32;
 	}
 	CS_HLWA_R FreeUser32Library() {
-		if (g_user32 != nullptr) FreeLibrary(g_user32);
+		if (g_user32 == nullptr) return CS_HLWA_R_NOTFOUND;
+		FreeLibrary(g_user32);
+		g_user32 = nullptr;
 		return CS_HLWA_R_SUCCESS;
 	}
 	void SetupCOM() {
